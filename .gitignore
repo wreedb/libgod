@@ -3,3 +3,4 @@ compile_commands.json
 *.t
 *.a
 .cache/
+site/

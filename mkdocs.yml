@@ -1,0 +1,57 @@
+docs_dir: doc
+site_name: libgod documentation
+nav:
+ - home: index.md
+ - about: about.md
+ - api:
+   - libgod: 
+     - links: libgod/links.md
+     - namespaces:
+       - list: libgod/namespaces.md
+       - members: libgod/namespace_members.md
+       - functions: libgod/functions.md
+       - variables: libgod/variables.md
+       - macros: libgod/macros.md
+       - files: libgod/files.md
+theme:
+  name: material
+  language: en
+  palette:
+  - media: "(prefers-color-scheme: light)"
+    scheme: default
+    primary: indigo
+    accent: deep orange
+    toggle:
+      icon: material/brightness-7
+      name: Switch to dark mode
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    primary: indigo
+    accent: deep orange
+    toggle:
+      icon: material/brightness-4
+      name: Switch to light mode
+        
+markdown_extensions:
+- pymdownx.highlight:
+    anchor_linenums: true
+    line_spans: __span
+    pygments_lang_class: true
+- pymdownx.superfences
+- attr_list
+
+plugins:
+  - search
+  - mkdoxy:
+      projects:
+        libgod:
+          src-dirs: src 
+          full-doc: true
+          doxy-cfg:
+            FILE_PATTERNS: "*.cpp *.hpp" 
+            RECURSIVE: true 
+            GENERATE_XML: true 
+            EXTRACT_ALL: true
+            HIDE_UNDOCUMENTED: false
+
+use_directory_urls: true

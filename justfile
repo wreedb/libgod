@@ -1,4 +1,7 @@
 @default:
-    @meson setup .build --wipe
+    @meson setup .build -D c_args='' -D cpp_args='' --buildtype=plain --wipe
     @meson compile -C .build
-    LD_LIBRARY_PATH=$PWD/.build .build/god_token sample.god
+    @meson test -C .build
+
+@docs:
+    @mkdocs serve
