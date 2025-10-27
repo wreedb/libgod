@@ -1,8 +1,9 @@
 #include <god.hpp>
 #include <optional>
+#include "god-test.hpp"
 
 int main() {
-    std::string fp = "example/sample.god";
+    std::string fp = SAMPLE_FILE;
     std::optional<std::vector<std::string>> infile = god::input::file(fp);
     if (!infile)
         return 1;

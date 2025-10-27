@@ -4,6 +4,7 @@
 #include <optional>
 #include <vector>
 #include <cassert>
+#include "god-test.hpp"
 
 using std::cout;
 using std::string;
@@ -11,7 +12,7 @@ using std::vector;
 using std::optional;
 
 int main() {
-    string path = "examples/sample.god";
+    string path = SAMPLE_FILE;
     
     optional<vector<string>> maybeLines = god::input::file(path);
     
