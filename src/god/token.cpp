@@ -20,8 +20,7 @@ namespace god {
         number,
         boolTrue,
         boolFalse,
-        nullValue,
-        eof
+        nullValue
     };
     
     std::string tokenTypeToString(tokenType& t) {
@@ -50,8 +49,6 @@ namespace god {
                 return "boolean";
             case nullValue:
                 return "null";
-            case eof:
-                return "eof";
             default:
                 return "unknown";
         }
