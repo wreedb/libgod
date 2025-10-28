@@ -3,4 +3,9 @@ compile_commands.json
 *.t
 *.a
 .cache/
+.build/
+build/
+.bld/
+bld/
 site/
+doc/book/
