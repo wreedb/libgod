@@ -1,4 +1,3 @@
-# -*- mode: nix; -*- vim:ft=nix
 {
     directions = [
         {

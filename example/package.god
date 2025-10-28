@@ -1,4 +1,3 @@
-# -*- mode: nix; -*- vim:ft=nix
 {
     name = "shepherd";
     version = "1.0.5";
