@@ -64,7 +64,7 @@ namespace god {
     };
     
     namespace make {
-        god::token token(god::tokenType tt, std::string lexeme, int lBegin, int lEnd, int cBegin, int cEnd) {
+        god::token token(god::tokenType tt, const std::string& lexeme, int lBegin, int lEnd, int cBegin, int cEnd) {
             return god::token
             {.type        = tt,
              .lexeme      = lexeme,
@@ -250,12 +250,6 @@ namespace god {
                     god::advance(cursor);
             } 
         }
-        
-        // tokens.push_back(god::make::token(
-        //     god::eof, "",
-        //     cursor.line, cursor.line,
-        //     cursor.column, cursor.column
-        // ));
         
         return tokens;
     }
