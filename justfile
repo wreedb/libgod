@@ -3,5 +3,10 @@
     @meson compile -C .build
     @meson test -C .build
 
-@docs:
-    @mkdocs serve
+[group("documentation")]
+@docs-build:
+    @mdbook build doc
+
+[group("documentation")]
+@docs-serve:
+    @mdbook serve doc
