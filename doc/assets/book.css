@@ -1,0 +1,17 @@
+/* Custom CSS to force left-alignment for tables in mdBook */
+
+/* Targets all tables in the main content area */
+.content table {
+    /* Resets the margin to force left alignment */
+    margin-left: 0;
+    margin-right: auto; 
+    
+    /* Ensures the table text content is aligned left */
+    text-align: left;
+}
+
+/* Ensure the table cell content is also left-aligned */
+.content table th, 
+.content table td {
+    text-align: left;
+}

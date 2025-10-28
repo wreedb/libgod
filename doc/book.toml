@@ -1,0 +1,8 @@
+[book]
+authors = ["Will Reed"]
+language = "en"
+src = "source"
+title = "Libgod"
+
+[output.html]
+additional-css = ["assets/book.css"]
