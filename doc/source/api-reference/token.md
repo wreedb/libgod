@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 Will Reed <wreed@disroot.org>
+
+SPDX-License-Identifier: LGPL-3.0-or-later
+-->
 Token
 =====
 This page documents parts of the api related to tokens and tokenizing.

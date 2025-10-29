@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 Will Reed <wreed@disroot.org>
+
+SPDX-License-Identifier: LGPL-3.0-or-later
+-->
 Types
 =====
 This page documents API specific type declarations.

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Will Reed <wreed@disroot.org>
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
 [book]
 authors = ["Will Reed"]
 language = "en"
@@ -6,10 +10,9 @@ title = "Libgod"
 
 [output.html]
 additional-css = [
-    "theme/tables.css",
+    "theme/custom.css",
     "theme/admonish.css",
-    "theme/fonts.css",
-    "theme/onedark.css"
+    "theme/syntax.css"
 ]
 default-theme = "navy"
 preferred-dark-theme = "navy"

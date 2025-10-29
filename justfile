@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Will Reed <wreed@disroot.org>
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
 @default:
     @meson setup .build -D c_args='' -D cpp_args='' --buildtype=plain --wipe
     @meson compile -C .build
@@ -13,8 +17,4 @@
 
 [group("documentation")]
 @changelog:
-    @perl misc/scripts/changelog.pl
-
-[group("documentation")]
-@changelog-write:
-    @perl misc/scripts/changelog.pl | tee -a CHANGELOG.md
+    @git-cliff

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Will Reed <wreed@disroot.org>
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
 #pragma once
 
 #ifndef GOD_HPP
@@ -6,6 +10,8 @@
 #include <utility>
 #include <optional>
 #include <vector>
+#include <variant>
+#include <unordered_map>
 #include <string>
 #include <limits>
 #include <cstdint>
@@ -78,7 +84,30 @@ namespace god {
     inline bool atEnd(const cursor& cursor);
     
     std::vector<god::token> tokenize(const std::vector<std::string>& lines);
-
+    
+    namespace type {
+        
+        struct map;
+        struct list;
+        
+        using value = std::variant<
+            std::string,
+            std::int64_t,
+            double,
+            bool,
+            std::nullptr_t,
+            map,
+            list
+        >;
+        
+        struct map {
+            std::unordered_map<std::string, value> members;
+        };
+        
+        struct list {
+            std::vector<value> elements;
+        };
+    }
 }
 
 #endif

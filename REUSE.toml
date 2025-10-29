@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2025 Will Reed
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
+version = 1
+SPDX-PackageName = "libgod"
+SPDX-PackageSupplier = "Will Reed <wreed@disroot.org>"
+
+[[annotations]]
+path = "example/*"
+SPDX-FileCopyrightText = "2025 Will Reed <wreed@disroot.org>"
+SPDX-License-Identifier = "LGPL-3.0-or-later"
+
+[[annotations]]
+path = "version"
+SPDX-FileCopyrightText = "2025 Will Reed <wreed@disroot.org>"
+SPDX-License-Identifier = "LGPL-3.0-or-later"
+
+[[annotations]]
+path = "doc/theme/admonish.css"
+SPDX-FileCopyrightText = "2022 Tom Milligan"
+SPDX-License-Identifier = "MIT"
