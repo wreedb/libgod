@@ -10,3 +10,11 @@
 [group("documentation")]
 @docs-serve:
     @mdbook serve doc --open
+
+[group("documentation")]
+@changelog:
+    @perl misc/scripts/changelog.pl
+
+[group("documentation")]
+@changelog-write:
+    @perl misc/scripts/changelog.pl | tee -a CHANGELOG.md
