@@ -69,3 +69,12 @@ test(
     include_directories: [libgod_headers],
     dependencies: dependencies,
     link_with: libgod))
+
+test(
+  'input-stream',
+  executable(
+    'input-stream',
+    'test/input-stream.cpp',
+    include_directories: [libgod_headers],
+    dependencies: dependencies,
+    link_with: libgod))

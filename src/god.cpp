@@ -1,14 +1,14 @@
 #include <utility>
 #include <cstdint>
 #include <limits>
+#include <regex>
 
 namespace god {
-    
-    constexpr std::int64_t integerMin = std::numeric_limits<std::int64_t>::min();
     constexpr std::int64_t integerMax = std::numeric_limits<std::int64_t>::max();
+    constexpr std::int64_t integerMin = std::numeric_limits<std::int64_t>::min();
     
-    constexpr double doubleMin = std::numeric_limits<double>::lowest();
     constexpr double doubleMax = std::numeric_limits<double>::max();
+    constexpr double doubleMin = std::numeric_limits<double>::lowest();
     
     int incr(const int& n) {
         return n + 1;
