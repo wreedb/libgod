@@ -7,6 +7,6 @@ containing functions in a sensible hierarchy.
 ---
 See the following pages for documentation of related components
 
-* [Constants](constants.md) API constants.
-* [Input](input.md): API members for obtaining input.
-* [Tokens](token.md): API members related to tokens.
+* [Constants](api-reference/constants.md) API constants.
+* [Input](api-reference/input.md): API members for obtaining input.
+* [Tokens](api-reference/token.md): API members related to tokens.

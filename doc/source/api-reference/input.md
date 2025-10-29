@@ -26,3 +26,9 @@ From an input stream, return a list of strings.
 std::vector<std::string> god::input::stream(std::istream& in);
 ```
 **Returns**: [`std::vector<std::string>`] - A list of strings, one for each line of the input.
+~~~admonish example
+Read lines from standard input
+```cpp
+auto lines = god::input::stream(std::cin);
+```
+~~~

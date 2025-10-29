@@ -5,4 +5,17 @@ src = "source"
 title = "Libgod"
 
 [output.html]
-additional-css = ["assets/book.css"]
+additional-css = [
+    "theme/tables.css",
+    "theme/admonish.css",
+    "theme/fonts.css",
+    "theme/onedark.css"
+]
+default-theme = "navy"
+preferred-dark-theme = "navy"
+preferred-light-theme = "rust"
+
+[preprocessor]
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "3.1.0"

@@ -9,4 +9,4 @@
 
 [group("documentation")]
 @docs-serve:
-    @mdbook serve doc
+    @mdbook serve doc --open
