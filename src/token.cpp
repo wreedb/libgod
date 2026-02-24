@@ -21,55 +21,55 @@ auto token::type_string() const noexcept -> std::string {
     }
 }
 
-auto tokens::now() -> token& {
+auto tokenstream::now() -> token& {
     return members.at(pos);
 }
 
-auto tokens::next() -> token& {
+auto tokenstream::next() -> token& {
     return members.at(pos + 1);
 }
 
-auto tokens::at(std::size_t n) const -> std::expected<const token*, error> {
+auto tokenstream::at(std::size_t n) const noexcept -> std::expected<const token*, error> {
     if (n >= members.size())
         return std::unexpected{error{"attempted to access out of bounds index"}};
     else
         return &members.at(n);
 }
 
-auto tokens::first() -> std::expected<token*, error> {
+auto tokenstream::first() -> std::expected<token*, error> {
     if (members.empty())
         return std::unexpected{error{"token deque is empty; no first element"}};
     else return &members.at(0);
 }
 
-auto tokens::last() -> std::expected<token*, error> {
+auto tokenstream::last() -> std::expected<token*, error> {
     if (members.empty())
         return std::unexpected{error{"token deque is empty; no first element"}};
     else return &members.at(members.size() - 1);
 }
 
-auto tokens::consume() -> void {
+auto tokenstream::consume() -> void {
     members.erase(members.begin() + pos);
 }
 
-auto tokens::consume(std::size_t n) -> void {
+auto tokenstream::consume(std::size_t n) -> void {
     // no-op if out of bounds
     if (n >= members.size() or n < 0) return;
     members.erase(members.begin() + n);
 }
 
-auto tokens::consume(std::size_t x, std::size_t y) -> void {
+auto tokenstream::consume(std::size_t x, std::size_t y) -> void {
     auto start = (members.begin() + x);
     auto end = (members.begin() + y);
     members.erase(start, end);
     pos = 0;
 }
 
-auto tokens::count() const noexcept -> std::size_t {
+auto tokenstream::count() const noexcept -> std::size_t {
     return members.size();
 }
 
-auto tokens::done() const noexcept -> bool {
+auto tokenstream::done() const noexcept -> bool {
     return (pos >= members.size());
 }
 

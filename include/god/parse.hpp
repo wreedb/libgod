@@ -84,7 +84,7 @@ std::expected<value, token_error> null(const token& t);
  *
  *  \return A god::value (god::map) or a parse_error
  */
-std::expected<value, parse_error> map(tokenstream& ts);
+std::expected<map, parse_error> map(tokenstream& ts);
 
 
 /** \brief Parse a position in a token set into a god::list
@@ -93,7 +93,7 @@ std::expected<value, parse_error> map(tokenstream& ts);
  *
  *  \return A god::value (god::list) or a parse_error
  */
-std::expected<value, parse_error> list(tokenstream& ts);
+std::expected<list, parse_error> list(tokenstream& ts);
 
 /** \brief Parse a position in a token set into a god::field
  *

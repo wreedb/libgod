@@ -18,7 +18,7 @@ constexpr static const double double_min = std::numeric_limits<double>::min();
 struct map;
 struct list;
 struct field;
-struct value;
+class value;
 
 using value_t = std::variant<
     std::nullptr_t,
@@ -35,11 +35,11 @@ struct identifier {
 };
 
 struct map {
-    std::vector<value_t> fields;
+    std::vector<field> fields;
 };
 
 struct list {
-    std::vector<value_t> items;
+    std::vector<value> items;
 };
 
 // struct value {

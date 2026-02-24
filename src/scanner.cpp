@@ -55,8 +55,8 @@ auto scanner::advance_line() -> void {
     cursor.column = 0;
 }
 
-auto scanner::scan() -> std::expected<tokens, scan_error> {
-    tokens ts{};
+auto scanner::scan() -> std::expected<tokenstream, scan_error> {
+    tokenstream ts{};
 
     while (not finished()) {
         std::uint32_t line_begin = (cursor.line + 1);

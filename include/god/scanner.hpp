@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace god {
-class tokens;
+class tokenstream;
 
 // for lexing purposes
 class scanner {
@@ -29,7 +29,7 @@ public:
     char peek();
     std::vector<char> peek(std::size_t amount);
 
-    std::expected<tokens, scan_error> scan();
+    std::expected<tokenstream, scan_error> scan();
 };
 
 };

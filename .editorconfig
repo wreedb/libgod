@@ -6,7 +6,7 @@ insert_final_newline = false
 charset = utf-8
 trim_trailing_whitespace = false
 
-[*.{json,cpp,hpp,cc,hh,cxx,hxx,c,h}]
+[*.{json,cpp,hpp,cc,hh,cxx,hxx,c,h,god,nix}]
 indent_style = space
 indent_size = 4
 

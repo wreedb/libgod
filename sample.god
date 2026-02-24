@@ -1,4 +1,6 @@
 {
     name = "Will";
-    a'1'1'1'1' = 26;
+    foo-map = {
+        numbers = [ 1 2 3 ];
+    };
 }
