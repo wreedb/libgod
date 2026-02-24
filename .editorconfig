@@ -1,0 +1,15 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = false
+charset = utf-8
+trim_trailing_whitespace = false
+
+[*.{json,cpp,hpp,cc,hh,cxx,hxx,c,h}]
+indent_style = space
+indent_size = 4
+
+[makefile]
+indent_style = tab
+tab_width = 4
