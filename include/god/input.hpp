@@ -1,6 +1,9 @@
 #pragma once
+#ifndef GOD_INPUT_HPP
+#define GOD_INPUT_HPP
 
-#include <god.hpp>
+#include <god/base.hpp>
+
 #include <deque>
 #include <expected>
 #include <string>
@@ -21,3 +24,5 @@ std::expected<std::deque<std::string>, god::error> file(const std::string& path)
 std::expected<std::deque<std::string>, god::error> stream(std::istream& is) noexcept;
 
 };
+
+#endif

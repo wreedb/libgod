@@ -73,5 +73,9 @@ auto tokenstream::done() const noexcept -> bool {
     return (pos >= members.size());
 }
 
+auto tokenstream::empty() const noexcept -> bool {
+    return members.empty();
+}
+
 
 }; // END namespace god

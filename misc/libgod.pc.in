@@ -1,0 +1,12 @@
+prefix=@PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+name: libgod
+description: God data serialization format parsing library
+version: @VERSION@
+url: https://codeberg.org/wreedb/libgod
+license: LGPL-3.0-or-later
+cflags: -I${includedir}
+libs: -L${libdir} -lgod

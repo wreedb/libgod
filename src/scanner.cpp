@@ -1,9 +1,10 @@
-#include <cctype>
-#include <expected>
-#include <god.hpp>
+#include <god/base.hpp>
 #include <god/util.hpp>
 #include <god/scanner.hpp>
 #include <god/token.hpp>
+
+#include <cctype>
+#include <expected>
 
 namespace god {
 
@@ -13,6 +14,10 @@ auto scanner::finished() const noexcept -> bool {
 
 auto scanner::eol() const noexcept -> bool {
     return (cursor.column >= lines.at(cursor.line).size());
+}
+
+auto scanner::eol(std::size_t n) const noexcept -> bool {
+    return ((cursor.column + n) >= lines.at(cursor.line).size());
 }
 
 auto scanner::now() -> char  {
@@ -31,8 +36,12 @@ auto scanner::peek(std::size_t amount) -> std::vector<char> {
     if (cursor.line >= lines.size()) return {'\0'};
     if (cursor.column >= lines.at(cursor.line).size()) return {'\n'};
     std::vector<char> result;
-    for (std::size_t n = 0; n < amount; ++n)
+    for (std::size_t n = 0; n < amount; ++n) {
+        auto& thisline = lines.at(cursor.line);
+        if (cursor.column + n >= thisline.size()) return result;
+        // if (eol(n)) return result;
         result.push_back(lines.at(cursor.line).at(cursor.column + n));
+    }
     return result;
 
 }
@@ -157,42 +166,27 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
             }
 
             default: {
+                using namespace std::string_literals;
                 if (std::isalpha(i) or (i == '_')) {
                     std::string lexeme;
-                    
+ 
+                    // The `matches' concept is equivalent to multiple OR comparisons
+                    // of the first argument to every following argument
                     while (std::isalnum(now()) or matches(now(), '_', '-', '\'')) {
                         lexeme.push_back(now());
                         advance();
                     }
 
-                    // while (
-                    //     (std::isalnum(now()))
-                    //  or (now() == '_')
-                    //  or (now() == '-')
-                    //  or (now() == '\''))
-                    // {
-                    //     lexeme.push_back(now());
-                    //     advance();
-                    // }
-
                     tokentype tt;
 
-                    if (matches(lexeme, "true", "false"))
+                    if (matches(lexeme, "true"s, "false"s))
                         tt = tokentype::boolean;
 
-                    else if (lexeme == "null")
+                    else if (lexeme == "null"s)
                         tt = tokentype::null;
                     
                     else
                         tt = tokentype::identifier;
-
-                    // boolean
-                    // if ((lexeme == "true") or (lexeme == "false"))
-                    //     tt = tokentype::boolean;
-                    // // null
-                    // else if (lexeme == "null")
-                    //     tt = tokentype::null;
-                    // identifier
 
                     ts.members.push_back(token{
                         tt, lexeme,
@@ -230,45 +224,33 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                     continue;
                 }
 
-                // if (std::isdigit(now())
-                // or (now() == '.')
-                // or (now() == '-'))
-                // {
-                //     std::string lexeme;
-                //
-                //     if (i == '-') {
-                //         lexeme.push_back(i);
-                //         advance();
-                //     }
-                //     while (std::isdigit(now())
-                //        or (now() == '.')
-                //        or (now() == '-'))
-                //     {
-                //         lexeme.push_back(now());
-                //         advance();
-                //     }
-                //
-                //     ts.members.push_back(token{
-                //         tokentype::number,
-                //         lexeme,
-                //         line_begin,
-                //         cursor.line + 1,
-                //         column_begin,
-                //         cursor.column + 1
-                //     });
-                //     continue;
-                // }
-
                 // multi-line string
-                if ((i == '\'') and (peek() == '\'')) {
+                if ((now() == '\'') and (peek() == '\'')) {
                     // pass the opening quotes
                     advance(2);
 
                     std::string lexeme;
-
+                    
+                    /** NOTE:
+                        The way multi-line string escape sequences work in Nix/God
+                        is uncommon; the delimiting markers ('') are part of the 
+                        sequence used to escape a character. This is my solution:
+                        
+                        Two rolling buffers of 2/4 characters while you are inside of
+                        a multi-line string, the next two characters are checked to
+                        determine the end delimiter, but since that is not always 
+                        the actual end, then we check ahead 4;
+                        
+                        If the third is a backslash, It's an escape sequence.
+                        We then take only the fourth character in the buffer,
+                        add it to the lexeme and advance four cells.
+                    
+                        If the third character is anything other than a backslash,
+                        lexically the string is over.
+                    **/
+                    
                     std::vector<char> next_two = {};
                     std::vector<char> next_four = {};
-
                     next_two.reserve(2);  next_two.resize(2);
                     next_four.reserve(4); next_four.resize(4);
 
@@ -277,42 +259,63 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                     [[maybe_unused]] bool ml_end = false;
 
                     while (not ml_end) {
+                        if (now() == '\n') {
+                            lexeme.push_back('\n');
+                            advance_line();
+                        }
+                        next_two.resize(2);
                         next_two = peek(2);
-
-                        if (peek(2) == std::vector<char>{'\'', '\''}) {
+                        
+                        if (next_two == std::vector<char>{'\'', '\''}) {
+                            std::vector<char> next_four = {};
                             next_four = peek(4);
-                            auto fourth = next_four.at(3);
+                            next_four.shrink_to_fit();
+                            
+                            // char fourth;
+                            // if (not (next_four.size() < 4))
+                            //     fourth = next_four.at(3);
 
                             if (next_four.at(2) == '\\') {
-                                switch (fourth) {
-                                    case 'n':
-                                        lexeme.push_back('\n');
-                                        advance(4);
-                                        continue;
-                                    case 'r':
-                                        lexeme.push_back('\r');
-                                        advance(4);
-                                        continue;
-                                    case 't':
-                                        lexeme.push_back('\t');
-                                        advance(4);
-                                        continue;
-                                    case '$':
-                                        lexeme.push_back('$');
-                                        advance(4);
-                                        continue;
-                                    default:
-                                        lexeme.push_back(fourth);
-                                        advance(4);
-                                        continue;
+                                if (next_four.size() >= 4) {
+                                    char fourth = next_four.at(3);
+                                    switch (fourth) {
+                                        case 'n':
+                                            lexeme.push_back('\n');
+                                            advance(4);
+                                            continue;
+                                        case 'r':
+                                            lexeme.push_back('\r');
+                                            advance(4);
+                                            continue;
+                                        case 't':
+                                            lexeme.push_back('\t');
+                                            advance(4);
+                                            continue;
+                                        case '$':
+                                            lexeme.push_back('$');
+                                            advance(4);
+                                            continue;
+                                        default:
+                                            lexeme.push_back(fourth);
+                                            advance(4);
+                                            continue;
+                                    }
+                                } else {
+                                    return std::unexpected{
+                                        scan_error{
+                                            "found an escape sequence, but line ended",
+                                            &lines,
+                                            &cursor
+                                        }
+                                    };
                                 }
+
                             } else {
                                 ml_end = true;
                                 continue;
                                 break;
                             }
                         }
-
                         lexeme.push_back(now());
                         advance();
                     }
@@ -320,6 +323,9 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                     // pass the closing quotes
                     advance(2);
 
+                    if (lexeme.at(0) == '\n') {
+                        lexeme.erase(lexeme.begin());
+                    }
                     ts.members.push_back(token{
                         tokentype::multiline_string,
                         lexeme,
@@ -345,7 +351,7 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                             else if (escaped == 'r') lexeme.push_back('\r');
                             else if (escaped == 't') lexeme.push_back('\t');
                             else if (escaped == '"') lexeme.push_back('"');
-                            else if (escaped == '\\') lexeme.append("\\\\");
+                            else if (escaped == '\\') lexeme.push_back('\\');
                             advance();
                         } else {
                             lexeme.push_back(now());

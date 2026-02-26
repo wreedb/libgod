@@ -1,0 +1,19 @@
+option('install',
+       type: 'feature',
+       value: 'auto',
+       description: 'install the library, default on; useful when used as a subproject')
+
+option('static-stdlib',
+       type: 'boolean',
+       value: false,
+       description: 'link the C++ standard library statically')
+
+option('libcxx',
+       type: 'boolean',
+       value: false,
+       description: 'build and link with libc++, only works with clang/llvm')
+
+option('tests',
+       type: 'feature',
+       value: 'auto',
+       description: 'build tests for libgod')

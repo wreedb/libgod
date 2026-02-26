@@ -2,10 +2,10 @@
 #ifndef GOD_UTIL_HPP
 #define GOD_UTIL_HPP
 
-#include <god.hpp>
+#include <god/base.hpp>
+
 #include <string>
 #include <vector>
-#include <expected>
 #include <concepts>
 
 namespace god {
@@ -29,8 +29,9 @@ overloaded(Ts...) -> overloaded<Ts...>;
 namespace god::util {
 
 std::vector<std::string> split(const std::string& str, const char delim = ' ');
-std::expected<std::vector<std::string>, error> split(const std::string& str, std::string delim = " ");
-
+std::vector<std::string> split(const std::string& str, std::string delim = " ");
+std::vector<std::string> split(const char *str, const char delim = ' ');
+std::vector<std::string_view> splitsv(std::string_view str, const char delim = ' ');
 
 };
 

@@ -24,3 +24,5 @@ compile_commands.json
 build/
 bld/
 stage/
+
+.zed/

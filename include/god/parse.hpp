@@ -2,7 +2,7 @@
 #ifndef GOD_PARSE_HPP
 #define GOD_PARSE_HPP
 
-#include <god.hpp>
+#include <god/base.hpp>
 #include <god/util.hpp>
 #include <god/token.hpp>
 #include <god/types.hpp>
@@ -18,7 +18,7 @@ private:
     const god::tokenstream* tokens;
 
 public:
-    parse_error(const god::tokenstream *ts) : tokens{ts} {};
+    parse_error(const god::tokenstream *ts) : tokens{ts} {}
 
     parse_error(std::string msg, const god::tokenstream *ts)
         : message{std::move(msg)},
@@ -32,6 +32,10 @@ public:
 };
 
 namespace god::parse {
+    
+struct settings {
+    bool clobber = true;
+};
 
 /** \brief Parse a multiline string token into a sensible format for storage
  *
@@ -104,13 +108,14 @@ std::expected<list, parse_error> list(tokenstream& ts);
 std::expected<field, parse_error> field(tokenstream& ts);
 
 
-/** \brief Parse a token set into a god::document
+/** @brief Parse a token set into a god::document
  *
- *  \param t a mutable god::tokens reference
+ *  @param ts A mutable tokenstream reference
+ *  @param s Optional settings struct to override default behaviour
  *
- *  \return A god::value (god::field) or a parse_error
+ *  @return A god::value (god::field) or a parse_error
  */
-std::expected<document, parse_error> document(tokenstream& ts);
+std::expected<document, parse_error> document(tokenstream& ts, settings s = {.clobber = true});
 
 }; // END namespace god
 

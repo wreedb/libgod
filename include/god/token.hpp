@@ -3,7 +3,7 @@
 #ifndef GOD_TOKEN_HPP
 #define GOD_TOKEN_HPP
 
-#include <god.hpp>
+#include <god/base.hpp>
 #include <expected>
 #include <deque>
 

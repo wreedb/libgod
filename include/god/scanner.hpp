@@ -1,6 +1,8 @@
 #pragma once
+#ifndef GOD_SCANNER_HPP
+#define GOD_SCANNER_HPP
 
-#include <god.hpp>
+#include <god/base.hpp>
 
 #include <expected>
 #include <vector>
@@ -18,6 +20,7 @@ public:
     
     bool finished() const noexcept;
     bool eol() const noexcept;
+    bool eol(std::size_t n) const noexcept;
 
     char now();
     
@@ -33,3 +36,5 @@ public:
 };
 
 };
+
+#endif
