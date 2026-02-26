@@ -72,5 +72,27 @@ auto document::add(god::field& f) noexcept -> std::expected<int, error> {
     fields.push_back(f);
     return 0;
 }
+
+auto map::clobber(field& f) noexcept -> map& {
+    for (std::size_t n = 0; n < this->size(); ++n) {
+        if ((*this)[n].name == f.name) {
+            (*this).erase(this->begin() + n);
+        }
+    }
+    this->push_back(f);
+    return *this;
+}
+
+auto map::add(field& f) noexcept -> std::expected<int, error> {
+    for (std::size_t n = 0; n < this->size(); ++n) {
+        if ((*this)[n].name == f.name) {
+            return std::unexpected<error>{
+                std::format("a field with identifier '{}' is already present", f.name)
+            };
+        }
+    }
+    this->push_back(f);
+    return 0;
+}
     
 };

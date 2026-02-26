@@ -19,7 +19,15 @@ tests = [
     'mixed',
     'empty-list',
     'empty-map',
-    'empty-nested-list'
+    'empty-nested-list',
+    'illegal-identifier',
+    'identifier-in-list',
+    'termination-in-list',
+    'missing-termination',
+    'deep-nested-query',
+    'no-closing-brace',
+    'no-opening-brace',
+    'no-value'
 ]
 
 foreach t : tests

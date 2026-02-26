@@ -99,10 +99,10 @@ public:
 
     void send() const noexcept {
         std::println(std::cerr, "{}", message);
-        std::println(std::cerr, "location when error was encountered: [{}:{}]", line, column);
-        std::print(std::cerr, "{}", context_lines.at(0)); 
-        std::print(std::cerr, "{}", context_lines.at(1)); 
-        std::print(std::cerr, "{}", context_lines.at(2)); 
+        std::println(std::cerr, "error location: [{}:{}]", line + 1, column + 1);
+        std::println(std::cerr, "{}", context_lines.at(0)); 
+        std::println(std::cerr, "{}", context_lines.at(1)); 
+        std::println(std::cerr, "{}", context_lines.at(2)); 
         quit();
     }
 

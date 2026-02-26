@@ -66,10 +66,11 @@ public:
   with a constant pointer to a token. This token provides
   great contextual information for error reporting.
 */
-class token_error : public error {
+class token_error {
 private:
     std::string message = "undocumented token error";
-    const god::token* token;
+    const god::token& token;
+    int return_code = 1;
 
 public:
     /** \brief Constructor with only the token pointer
@@ -77,11 +78,11 @@ public:
      *  It is better practice to use the constructor with a message
      *  argument for obvious reasons.
      */
-    token_error(const god::token* t) : token{t} {};
+    token_error(const god::token& t) : token{t} {};
     
     /** \brief Constructor with a message and token pointer
      */
-    token_error(std::string msg, const god::token* t) : message{std::move(msg)}, token{t} {}
+    token_error(const std::string& msg, const god::token& t) : message{msg}, token{t} {}
 
     /** \brief Get a visual of the offending token
      *  \return A thorough string representation
@@ -89,21 +90,29 @@ public:
     std::string context() const noexcept {
         return std::format(
             "token: {{ type = {}, begin = [{}:{}], end = [{}:{}], value = [{}] }}",
-            token->type_string(),
-            token->line_begin,
-            token->column_begin,
-            token->line_end,
-            token->column_end,
-            token->lexeme
+            token.type_string(),
+            token.line_begin,
+            token.column_begin,
+            token.line_end,
+            token.column_end,
+            token.lexeme
         );
     }
 
+    void quit() const noexcept {
+        std::exit(return_code);
+    }
+    
     /** \brief Report the issue the standard error with context and exit
      */
     void send() const noexcept {
         std::println(std::cerr, "{}", message);
         std::println(std::cerr, "{}", context());
         quit();
+    }
+    
+    void panic() const noexcept {
+        send();
     }
 };
 

@@ -1,4 +1,4 @@
 {
-    empty = "foo";
-    empty = {};
+    list = [ { a = 1; } ];
+    another = [ @ ]
 }

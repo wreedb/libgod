@@ -20,7 +20,14 @@ constexpr static const double double_min = static_cast<double>(integer_min);
 struct field;
 class value;
 
-using map = std::vector<field>;
+// using map = std::vector<field>;
+
+struct map : std::vector<field> {
+    using std::vector<field>::vector;
+    map& clobber(field& f) noexcept;
+    std::expected<int, error> add(field& f) noexcept;
+};
+
 using list = std::vector<value>;
 using identifier = std::string;
 
@@ -78,7 +85,6 @@ public:
     identifier name;
     value val;
     bool operator==(const field& other) const {
-        using namespace std::string_literals;
         if (matches(name, other.name))
             return true;
         if (val.is<std::string>() and other.val.is<std::string>())

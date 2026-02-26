@@ -1,5 +1,5 @@
-#include "god/base.hpp"
 #include <expected>
+#include <god/base.hpp>
 #include <god/types.hpp>
 #include <god/token.hpp>
 #include <god/parse.hpp>
@@ -7,12 +7,13 @@
 namespace god {
 
 auto parse_error::context() const noexcept -> std::string {
-    if ((tokens == nullptr) or (tokens->empty())) {
+    if (tokens.empty()) {
         return "\033[1;31m>>>\033[m no context available, tokens queue is empty";
     }
+    
     std::string result;
 
-    auto previous_token = tokens->at(tokens->pos - 1);
+    auto previous_token = tokens.at(tokens.pos - 1);
 
     if (not previous_token) {
         result.append("no previous token\n");
@@ -29,10 +30,11 @@ auto parse_error::context() const noexcept -> std::string {
         ));
     }
 
-    auto this_token = tokens->at(tokens->pos);
+    auto this_token = tokens.at(tokens.pos);
 
     if (not this_token) {
         this_token.error().send();
+        
     } else {
         auto curr = this_token.value();
         result.append(std::format(
@@ -46,7 +48,7 @@ auto parse_error::context() const noexcept -> std::string {
         ));
     }
 
-    auto next_token = tokens->at(tokens->pos + 1);
+    auto next_token = tokens.at(tokens.pos + 1);
     
     if (not next_token) {
         result.append("no succeeding token\n");
@@ -66,10 +68,40 @@ auto parse_error::context() const noexcept -> std::string {
     return result;
 }
 
-auto parse_error::send() const noexcept -> void {
+auto parse_error::msg() const noexcept -> std::string_view {
+    return message;
+}
+
+auto parse_error::msg(std::string str) -> parse_error& {
+    message = std::move(str);
+    return *this;
+}
+
+auto parse_error::code() const noexcept -> int {
+    return return_code;
+}
+
+auto parse_error::code(int new_code) -> parse_error& {
+    return_code = new_code;
+    return *this;
+}
+
+auto parse_error::quit() const noexcept -> void {
+    std::exit(return_code);
+}
+
+auto parse_error::die() const noexcept -> void {
     std::println(std::cerr, "{}", message);
     std::print(std::cerr, "{}", context());
     quit();
+}
+
+auto parse_error::panic() const noexcept -> void {
+    die();
+}
+
+auto parse_error::send() const noexcept -> void {
+    die();
 }
 
 }; // END namespace god
@@ -122,15 +154,14 @@ auto boolean(const token& t) -> std::expected<value, token_error> {
     if (t.lexeme == "true") return value{true};
     else if (t.lexeme == "false") return value{false};
     else return std::unexpected{
-        token_error{"unable to parse token lexeme '{}' as a boolean value", &t}
+        token_error{"unable to parse token lexeme '{}' as a boolean value", t}
     };
 }
 
 auto null(const token& t) -> std::expected<value, token_error> {
     if (t.lexeme == "null") return value{nullptr};
     else return std::unexpected{token_error{
-        "unable to parse token lexeme '{}' as a null value",
-        &t
+        "unable to parse token lexeme '{}' as a null value", t
     }};
 }
 
@@ -138,16 +169,16 @@ auto number(const token& t) -> std::expected<value, token_error> {
     if (t.lexeme.find('.') != std::string::npos) {
         double v = std::stod(t.lexeme);
         if (v > double_max)
-            return std::unexpected{token_error{"double value is greater than maximum limit", &t}};
+            return std::unexpected{token_error{"double value is greater than maximum limit", t}};
         if (v < double_min)
-            return std::unexpected{token_error{"double value is below the minimum limit", &t}};
+            return std::unexpected{token_error{"double value is below the minimum limit", t}};
         return value{v};
     } else {
         std::int64_t v = std::stoll(t.lexeme);
         if (v > integer_max)
-            return std::unexpected{token_error{"integer value is greater than maximum limit", &t}};
+            return std::unexpected{token_error{"integer value is greater than maximum limit", t}};
         if (v < integer_min)
-            return std::unexpected{token_error{"integer value is below the minimum limit", &t}};
+            return std::unexpected{token_error{"integer value is below the minimum limit", t}};
         return value{v};
     }
 }
@@ -156,7 +187,7 @@ auto list(tokenstream& ts) -> std::expected<god::list, parse_error> {
     // verify that we are actually being dispatched
     // to parse a list
     if (ts.now().type != tokentype::left_bracket)
-        return std::unexpected{parse_error{"expected an opening list bracket", &ts}};
+        return std::unexpected{parse_error{"expected an opening list bracket", ts}};
     else
         ts.consume();
     
@@ -214,7 +245,7 @@ auto list(tokenstream& ts) -> std::expected<god::list, parse_error> {
             // encountered a map
             case tokentype::left_brace: {
                 auto x = parse::map(ts);
-                if (not x) return std::unexpected{parse_error{"unexpected token", &ts}};
+                if (not x) return std::unexpected{parse_error{"unexpected token", ts}};
                 lst.push_back(x.value());
                 // parse::map does the consumption, don't do it here
                 break;
@@ -223,16 +254,25 @@ auto list(tokenstream& ts) -> std::expected<god::list, parse_error> {
             // encountered a list
             case tokentype::left_bracket: {
                 auto x = parse::list(ts);
-                if (not x) return std::unexpected{parse_error{"unexpected token", &ts}};
+                if (not x) return std::unexpected{parse_error{"unexpected token", ts}};
                 lst.push_back(x.value());
                 // parse::list does the consumption, don't do it here
                 break;
             }
             
+            // illegal: identifiers not allowed in the base context of a list
+            case tokentype::identifier: {
+                return std::unexpected{parse_error{"illegal identifier in list context", ts}};
+            }
+            
+            // illegal: field termination in the base context of a list
+            case tokentype::semicolon: {
+                return std::unexpected{parse_error{"illegal identifier in list context", ts}};
+            }
+            
             // something unknown
             default: {
-                return std::unexpected{parse_error{"unexpected token", &ts}};
-                break;
+                return std::unexpected{parse_error{"unexpected token", ts}};
             }
             
         }
@@ -247,9 +287,9 @@ auto list(tokenstream& ts) -> std::expected<god::list, parse_error> {
     return lst;
 }
 
-auto map(tokenstream& ts) -> std::expected<god::map, parse_error> {
+auto map(tokenstream& ts, settings s) -> std::expected<god::map, parse_error> {
     if (ts.now().type != tokentype::left_brace) {
-        return std::unexpected{parse_error{"expected an opening map brace '{'", &ts}};
+        return std::unexpected{parse_error{"expected an opening map brace '{'", ts}};
     } else {
         ts.consume();
     }
@@ -259,11 +299,16 @@ auto map(tokenstream& ts) -> std::expected<god::map, parse_error> {
     while(ts.now().type != tokentype::right_brace) {
         auto x = parse::field(ts);
         if (not x) x.error().panic();
-        mp.push_back(x.value());
+        if (s.clobber) {
+            mp.clobber(x.value());
+        } else {
+            auto added = mp.add(x.value());
+            if (not added) added.error().panic();
+        }
     }
     
     if (ts.now().type != tokentype::right_brace) {
-        return std::unexpected{parse_error{"expected a closing map brace '}'", &ts}};
+        return std::unexpected{parse_error{"expected a closing map brace '}'", ts}};
     } else {
         ts.consume();
     }
@@ -279,7 +324,7 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
 
     // check for the identifier
     if (ts.now().type != tokentype::identifier) {
-        return std::unexpected{parse_error{"expected an identifier", &ts}};
+        return std::unexpected{parse_error{"expected an identifier", ts}};
     } else {
         // store the identifier and consume it
         f.name = ts.now().lexeme;
@@ -288,7 +333,7 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
 
     // check for and consume the assignment operator
     if (ts.now().type != tokentype::equal) {
-        return std::unexpected{parse_error{"expected an assignment (=) operator", &ts}};
+        return std::unexpected{parse_error{"expected an assignment (=) operator", ts}};
     } else {
         ts.consume();
     }
@@ -298,16 +343,16 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
     switch (ts.now().type) {
         case tokentype::left_brace: {
             auto x = parse::map(ts);
-            //if (not x) return std::unexpected{x.error()};
-            if (not x) x.error().panic();
+            if (not x) return std::unexpected{x.error()};
+            // if (not x) x.error().panic();
             f.val = x.value();
             break;
         }
 
         case tokentype::left_bracket: {
             auto x = parse::list(ts);
-            // if (not x) return std::unexpected{x.error()};
-            if (not x) x.error().panic();
+            if (not x) return std::unexpected{x.error()};
+            // if (not x) x.error().panic();
             f.val = x.value();
             break;
         }
@@ -353,15 +398,13 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
         }
 
         default: {
-            return std::unexpected{
-                parse_error{"expected a value", &ts}
-            };
+            return std::unexpected{parse_error{"expected a value", ts}};
         }
     }
 
     // check the termination operator ';'
     if ((ts.empty()) or (ts.now().type != tokentype::semicolon)) {
-        return std::unexpected{parse_error{"expected a termination (;) operator", &ts}};
+        return std::unexpected{parse_error{"expected a termination (;) operator", ts}};
     } else {
         ts.consume();
     }
@@ -375,7 +418,7 @@ auto document(tokenstream &ts, settings s) -> std::expected<god::document, parse
     auto first = ts.first();
     if (not first) first.error().send();
     if (first.value()->type != tokentype::left_brace)
-        return std::unexpected{parse_error{"file/input must begin with an opening document brace", &ts}};
+        return std::unexpected{parse_error{"file/input must begin with an opening document brace", ts}};
     else
         ts.consume(0);
     
@@ -383,7 +426,7 @@ auto document(tokenstream &ts, settings s) -> std::expected<god::document, parse
     auto last = ts.last();
     if (not last) last.error().send();
     if (last.value()->type != tokentype::right_brace)
-        return std::unexpected{parse_error{"file/input must end with a closing document brace", &ts}};
+        return std::unexpected{parse_error{"file/input must end with a closing document brace", ts}};
     else
         ts.consume(ts.count() - 1);
     
@@ -392,7 +435,7 @@ auto document(tokenstream &ts, settings s) -> std::expected<god::document, parse
     
     while (not ts.done()) {
         auto x = parse::field(ts);
-        if (not x) return std::unexpected{parse_error{"failed parsing a field", &ts}};
+        if (not x) return std::unexpected(x.error());
         if (s.clobber) {
             doc.clobber(x.value());
         } else {
@@ -403,7 +446,7 @@ auto document(tokenstream &ts, settings s) -> std::expected<god::document, parse
     
     // error if we reached the 'end', but tokens are not empty
     if (not ts.empty())
-        return std::unexpected{parse_error("end of tokenstream reached but tokens remain", &ts)};
+        return std::unexpected{parse_error("end of tokenstream reached but tokens remain", ts)};
     
     return doc;
 }

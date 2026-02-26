@@ -17,3 +17,8 @@ option('tests',
        type: 'feature',
        value: 'auto',
        description: 'build tests for libgod')
+
+option('demos',
+       type: 'boolean',
+       value: false,
+       description: 'build demonstration programs')

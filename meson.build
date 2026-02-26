@@ -98,3 +98,21 @@ if get_option('install').allowed()
         install_dir: get_option('prefix') / 'lib' / 'pkgconfig')
 
 endif
+
+if get_option('demos')
+
+    executable(
+        'demo',
+        'misc/demo.cpp',
+        include_directories: includes,
+        link_with: lib,
+        install: false)
+    
+    executable(
+        'tokens',
+        'misc/tokens.cpp',
+        include_directories: includes,
+        link_with: lib,
+        install: false)
+
+endif

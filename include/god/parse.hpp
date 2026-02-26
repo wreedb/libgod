@@ -11,25 +11,54 @@
 
 namespace god {
 
-//
-class parse_error : public error {
+class parse_error {
 private:
+    int return_code = 0;
     std::string message = "undocumented parsing error";
-    const god::tokenstream* tokens;
-
+    const god::tokenstream& tokens;
+    
 public:
-    parse_error(const god::tokenstream *ts) : tokens{ts} {}
-
-    parse_error(std::string msg, const god::tokenstream *ts)
+    parse_error(const god::tokenstream &ts) : tokens{ts} {}
+    parse_error(std::string msg, const god::tokenstream &ts)
         : message{std::move(msg)},
           tokens{ts}
     {}
-
+    
+    std::string_view msg() const noexcept;
+    parse_error& msg(std::string str);
+    
+    int code() const noexcept;
+    parse_error& code(int new_code);
+    
     std::string context() const noexcept;
+    
+    void quit() const noexcept;
+    void panic() const noexcept;
     void send() const noexcept;
-};
+    void die() const noexcept;
+    
+}; // END class parse_error
+}; // END namespace god
+    
+//
+// class parse_error : public error {
+// private:
+//     std::string message = "undocumented parsing error";
+//     const god::tokenstream* tokens;
 
-};
+// public:
+//     parse_error(const god::tokenstream *ts) : tokens{ts} {}
+
+//     parse_error(std::string msg, const god::tokenstream *ts)
+//         : message{std::move(msg)},
+//           tokens{ts}
+//     {}
+
+//     std::string context() const noexcept;
+//     void send() const noexcept;
+// };
+
+// };
 
 namespace god::parse {
     
@@ -88,7 +117,7 @@ std::expected<value, token_error> null(const token& t);
  *
  *  \return A god::value (god::map) or a parse_error
  */
-std::expected<map, parse_error> map(tokenstream& ts);
+std::expected<map, parse_error> map(tokenstream& ts, settings s = {});
 
 
 /** \brief Parse a position in a token set into a god::list
@@ -115,7 +144,7 @@ std::expected<field, parse_error> field(tokenstream& ts);
  *
  *  @return A god::value (god::field) or a parse_error
  */
-std::expected<document, parse_error> document(tokenstream& ts, settings s = {.clobber = true});
+std::expected<document, parse_error> document(tokenstream& ts, settings s = {});
 
 }; // END namespace god
 
