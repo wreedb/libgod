@@ -7,6 +7,18 @@
 #include <vector>
 #include <algorithm>
 
+namespace god {
+
+auto countchars(std::string_view str) -> std::size_t {
+    std::size_t count = 0;
+    for (unsigned char c: str)
+        if ((c & 0b110000000) != 0b10000000)
+            ++count;
+    return count;
+}
+    
+};
+
 namespace god::util {
 
 auto split(const std::string& str, const char delim) -> std::vector<std::string> {
