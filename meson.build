@@ -3,7 +3,7 @@ project('libgod', 'cpp',
     license: 'LGPL-3.0-or-later',
     meson_version: '>= 1.9.0',
     default_options: {
-        'cpp_std': 'c++26'
+        'cpp_std': 'c++23'
     }
 )
 
@@ -19,12 +19,13 @@ version_patch = semver[2]
 subdir('include/god')
 
 cxx = meson.get_compiler('cpp')
+cxxname = cxx.get_id()
 
 feat_tests = get_option('tests')
 opt_libcxx = get_option('libcxx')
 opt_stdstatic = get_option('static-stdlib')
 
-if cxx.get_id() == 'clang' and opt_libcxx
+if cxxname == 'clang' and opt_libcxx
     add_project_arguments('-Wno-unused-command-line-argument', language: 'cpp')
     add_project_arguments('-stdlib=libc++', language: 'cpp')
     add_project_link_arguments('-stdlib=libc++', language: 'cpp')
@@ -32,10 +33,9 @@ if cxx.get_id() == 'clang' and opt_libcxx
     deps += cxx.find_library('c++abi', required: true, static: opt_stdstatic)
 endif
 
-if opt_stdstatic and cxx.get_id() == 'gcc'
+if opt_stdstatic and cxxname == 'gcc'
     add_project_link_arguments('-static-libgcc', '-static-libstdc++', language: 'cpp')
 endif
-
 
 sources = files(
     'src/input.cpp',
@@ -111,6 +111,13 @@ if get_option('demos')
     executable(
         'tokens',
         'misc/tokens.cpp',
+        include_directories: includes,
+        link_with: lib,
+        install: false)
+
+    executable(
+        'god-tool',
+        'misc/god-tool.cpp',
         include_directories: includes,
         link_with: lib,
         install: false)
