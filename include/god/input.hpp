@@ -7,6 +7,7 @@
 #include <deque>
 #include <expected>
 #include <string>
+#include <filesystem>
 
 
 namespace god::input {
@@ -16,6 +17,9 @@ namespace god::input {
  *  @return A deque of strings or a god::error object
  **/
 std::expected<std::deque<std::string>, god::error> file(const std::string& path) noexcept;
+std::expected<std::deque<std::string>, god::error> file(const std::filesystem::path& path) noexcept;
+std::expected<std::deque<std::string>, god::error> file(const char* path) noexcept;
+
 
 /** @brief Read lines from an input stream to deque of strings
  *  @param is The input stream to attempt reading from
