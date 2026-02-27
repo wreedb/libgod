@@ -22,4 +22,6 @@ path = [
     "doc/**",
     "example/**",
     "src/**",
+    "*.nix",
+    "*.lock"
 ]
