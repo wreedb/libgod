@@ -11,7 +11,7 @@
             let
                 pkgs = nixpkgs.legacyPackages.${system};
                 lib  = nixpkgs.legacyPackages.${system}.lib;
-                stdenv = pkgs.llvmPackages_21.stdenv;
+                stdenv = pkgs.llvmPackages_21.libcxxStdenv;
                 version = builtins.readFile ./.version;
 
                 nativeBuildInputs = with pkgs; [
@@ -19,7 +19,9 @@
                     ninja
                 ];
 
-                libgod-package = stdenv.mkDerivations {
+                buildInputs = [ pkgs.llvmPackages.libcxx ];
+
+                libgod-package = stdenv.mkDerivation {
                     pname = "libgod";
                     inherit version;
                     src = ./.;
@@ -36,11 +38,10 @@
                         license = lib.licenses.lgpl3Plus;
                     };
 
-                    inherit nativeBuildInputs;
+                    inherit nativeBuildInputs buildInputs;
 
                     mesonBuildType = "release";
                     mesonFlags = [
-                        "-D libcxx=true"
                         "-D strip=true"
                     ];
                 };
@@ -50,7 +51,7 @@
                 packages.default = libgod-package;
 
                 devShells.default = pkgs.mkShell {
-                    inherit nativeBuildInputs;
+                    inherit nativeBuildInputs buildInputs;
                 };
             }
         );
