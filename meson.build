@@ -21,6 +21,14 @@ subdir('include/god')
 cxx = meson.get_compiler('cpp')
 cxxname = cxx.get_id()
 
+if not cxx.has_header('utf8.h')
+    deps += dependency(
+        'utfcpp',
+        required: true,
+        fallback: ['utfcpp', 'utfcpp_dep'])
+
+endif
+
 feat_tests = get_option('tests')
 opt_libcxx = get_option('libcxx')
 opt_stdstatic = get_option('static-stdlib')
@@ -39,11 +47,13 @@ endif
 
 sources = files(
     'src/input.cpp',
+    'src/encoding.cpp',
     'src/output.cpp',
     'src/parse.cpp',
     'src/scanner.cpp',
     'src/token.cpp',
     'src/types.cpp',
+    'src/types/string.cpp',
     'src/util.cpp'
 )
 
@@ -76,8 +86,11 @@ headers = files(
     'include/god/util.hpp',
 )
 
+types_headers = files('include/god/types/string.hpp')
+
 install_headers('include/god.hpp')
 install_headers(headers, install_dir: get_option('includedir') / 'god')
+install_headers(types_headers, install_dir: get_option('includedir') / 'god' / 'types')
 
 if feat_tests.allowed()
     subdir('test')
@@ -106,6 +119,7 @@ if get_option('demos')
         'misc/demo.cpp',
         include_directories: includes,
         link_with: lib,
+        dependencies: deps,
         install: false)
     
     executable(
@@ -113,6 +127,7 @@ if get_option('demos')
         'misc/tokens.cpp',
         include_directories: includes,
         link_with: lib,
+        dependencies: deps,
         install: false)
 
     executable(
@@ -120,6 +135,7 @@ if get_option('demos')
         'misc/god-tool.cpp',
         include_directories: includes,
         link_with: lib,
+        dependencies: deps,
         install: false)
 
 endif

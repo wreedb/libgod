@@ -10,12 +10,15 @@
 
 #include <god/util.hpp>
 
+#include <god/types/string.hpp>
+
 namespace god {
 
 constexpr static const std::int64_t integer_max = 9223372036854775807;
 constexpr static const std::int64_t integer_min = -9223372036854775807;
 constexpr static const double double_max = static_cast<double>(integer_max);
 constexpr static const double double_min = static_cast<double>(integer_min);
+
 
 struct field;
 class value;
@@ -85,16 +88,16 @@ public:
     identifier name;
     value val;
     bool operator==(const field& other) const {
-        if (matches(name, other.name))
+        if (name == other.name)
             return true;
         if (val.is<std::string>() and other.val.is<std::string>())
-            if (matches(val.as<std::string>(), other.val.as<std::string>()))
+            if (val.as<std::string>() == other.val.as<std::string>())
                 return true;
         if (val.is<std::int64_t>() and other.val.is<std::int64_t>())
-            if (matches(val.as<std::int64_t>(), other.val.as<std::int64_t>()))
+            if (val.as<std::int64_t>() == other.val.as<std::int64_t>())
                 return true;
         if (val.is<double>() and other.val.is<double>())
-            if (matches(val.as<double>(), other.val.as<double>()))
+            if (val.as<double>() == other.val.as<double>())
                 return true;
         if (val.is<bool>() and other.val.is<bool>())
             if (val.as<bool>() == other.val.as<bool>())
