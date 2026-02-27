@@ -8,6 +8,7 @@ foreach t : ['boolean', 'string', 'integer', 'null', 'list']
         filename,
         include_directories: includes,
         link_with: lib,
+        dependencies: deps,
         install: false)
 
     test(name, x, args: files('aux/users.god'))
@@ -17,7 +18,8 @@ plain_tests = [
     'integer-max',
     'integer-min',
     'double-max',
-    'double-min'
+    'double-min',
+    'invalid-utf8'
 ]
 
 foreach t : plain_tests
@@ -28,6 +30,7 @@ foreach t : plain_tests
         filename,
         include_directories: includes,
         link_with: lib,
+        dependencies: deps,
         install: false)
     test(name, x)
 endforeach
@@ -48,7 +51,10 @@ tests = [
     'no-opening-brace',
     'no-value',
     'no-clobber',
-    'overwrite'
+    'overwrite',
+    'null-identifier',
+    'true-identifier',
+    'false-identifier'
 ]
 
 foreach t : tests
@@ -60,6 +66,7 @@ foreach t : tests
         filename,
         include_directories: includes,
         link_with: lib,
+        dependencies: deps,
         install: false)
 
     test(name, x, args: files(input_file))
