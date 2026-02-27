@@ -5,6 +5,7 @@
 #include <god/version.hpp>
 #include <god/base.hpp>
 #include <god/input.hpp>
+#include <god/encoding.hpp>
 #include <god/util.hpp>
 #include <god/types.hpp>
 #include <god/scanner.hpp>
