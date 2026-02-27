@@ -28,7 +28,7 @@ enum class tokentype {
 
 //! A lexical token derived from raw input
 /*!
-  consists of the tokens' type (enum member), the captured
+  Consists of the tokens' type (enum member), the captured
   lexeme, and a set of four coordinates for the line and 
   column positions it began and ended on.
 */

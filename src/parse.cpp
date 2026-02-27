@@ -327,11 +327,10 @@ auto map(tokenstream& ts, settings s) -> std::expected<god::map, parse_error> {
 auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
     god::field f;
 
-    // check for the identifier
-    if (ts.now().type != tokentype::identifier) {
+    // check for the identifier, null and booleans are valid identifiers
+    if (not matches(ts.now().type, tokentype::identifier, tokentype::boolean, tokentype::null)) {
         return std::unexpected{parse_error{"expected an identifier", ts}};
     } else {
-        // store the identifier and consume it
         f.name = ts.now().lexeme;
         ts.consume();
     }
