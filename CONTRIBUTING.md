@@ -37,7 +37,7 @@ or having their freedom encroached upon.
 ## Exceptions
 There are absolutely no exceptions.
 
-## Style
+## Hygiene
 This project follows the [Conventional Commits](https://conventionalcommits.org/en/v1.0.0/#summary) specification, and therefore  
 contributions must also. For ease of use, the author recommends using the  
 [convco](https://convco.github.io) tool for commits, as it helps streamline  
@@ -46,3 +46,19 @@ changelogs, compatible with the [Keep a Changelog](https://keepachangelog.com) s
 
 Also strictly followed is the [Semver 2.0.0](https://semver.org) specification, though it is  
 unlikely contributors will need to concern themselves with versioning.
+
+# Code Style
+We make generous use of namespaces, not just for organization, but it also has  
+the effect of reducing the need for the use of many functions or classes  
+needing a multi-word name; that being said, snake case is generally preferred  
+over camel-case.
+
+Capital letters are the enemy: the less you use them, the less any of us  
+have to reach our pinkies to the shift key. The only time they are tolerated  
+is in the event that it would cause naming collisions, which is pretty rare.  
+As of writing (2026-02-26), we only have one variable/class/struct/function  
+with a capital letter in its' name.  
+
+Never use formatters like `clang-format` on the code in the repository unless  
+it was written by you. Write with intention and care, and formatters are  
+never needed.  
