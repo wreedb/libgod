@@ -36,3 +36,7 @@ doc/.build/
 /god-tool
 
 /result
+
+subprojects/utfcpp/
+subprojects/packagecache/
+subprojects/.wraplock
