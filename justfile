@@ -69,6 +69,14 @@ flake-clean:
     -rm -f result
 
 [group("maintainence")]
+changelog:
+    @git cliff
+
+[group("maintainence")]
+changelog-range range:
+    @git cliff {{range}}
+
+[group("maintainence")]
 clean: clean-build clean-cache flake-clean clean-docs
 
 noop:

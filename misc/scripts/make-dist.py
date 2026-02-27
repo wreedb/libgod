@@ -50,6 +50,7 @@ release_files: list[path] = [
     path(".editorconfig"),
     path(".version"),
     path(".gitignore"),
+    path(".clangd"),
     path("cliff.toml"),
     path("flake.lock"),
     path("flake.nix"),
@@ -58,12 +59,16 @@ release_files: list[path] = [
     path("README.md"),
     path("meson.build"),
     path("meson.options"),
-    path("REUSE.toml")
+    path("REUSE.toml"),
+    path("subprojects")
 ];
 
 remove_patterns: list[str] = [
     ".build",
-    "version.hpp"
+    "version.hpp",
+    "packagecache",
+    ".wraplock",
+    "subprojects/utfcpp"
 ];
 
 def docopy(files: list[path]) -> path:

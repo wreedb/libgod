@@ -23,5 +23,6 @@ path = [
     "example/**",
     "src/**",
     "*.nix",
-    "*.lock"
+    "*.lock",
+    "subprojects/**"
 ]
