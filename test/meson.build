@@ -13,6 +13,25 @@ foreach t : ['boolean', 'string', 'integer', 'null', 'list']
     test(name, x, args: files('aux/users.god'))
 endforeach
 
+plain_tests = [
+    'integer-max',
+    'integer-min',
+    'double-max',
+    'double-min'
+]
+
+foreach t : plain_tests
+    name = t
+    filename = t + '.test.cpp'
+    x = executable(
+        name,
+        filename,
+        include_directories: includes,
+        link_with: lib,
+        install: false)
+    test(name, x)
+endforeach
+
 tests = [
     'matrix',
     'deep-matrix',
@@ -27,7 +46,9 @@ tests = [
     'deep-nested-query',
     'no-closing-brace',
     'no-opening-brace',
-    'no-value'
+    'no-value',
+    'no-clobber',
+    'overwrite'
 ]
 
 foreach t : tests

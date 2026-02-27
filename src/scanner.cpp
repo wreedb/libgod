@@ -200,18 +200,63 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                 }
 
                 if (std::isdigit(now()) or matches(now(), '.', '-')) {
-
                     std::string lexeme;
                     
-                    if (i == '-') {
-                        lexeme.push_back(i);
-                        advance();
-                    }
-
-                    while (std::isdigit(now()) or matches(now(), '.', '-')) {
+                    // used to determine when the negation operator and
+                    // decimal have been already used
+                    bool decimal_point_used = false;
+                    bool negation_used = false;
+                    
+                    // check for and consume a negation operator
+                    if (now() == '-') {
+                        negation_used = true;
                         lexeme.push_back(now());
                         advance();
                     }
+                    
+                    // leading decimals are allowed, still only one is allow in the entire number
+                    if (now() == '.') {
+                        decimal_point_used = true;
+                        lexeme.push_back(now());
+                        advance();
+                    }
+                    
+                    if (negation_used and (now() == '-')) {
+                        return std::unexpected{scan_error{"a negation operator can only be used at the beginning of a number", &lines, &cursor}};
+                    }
+
+                    while (std::isdigit(now()) or matches(now(), '.', '-')) {
+                        if (lexeme.size() > 1 and (now() == '-'))
+                            return std::unexpected{scan_error{"a negation operator can only be used at the beginning of a number", &lines, &cursor}};
+                        
+                        if (decimal_point_used and (now() == '.')) {
+                            return std::unexpected{scan_error{"only one decimal point can be used in a numeric sequence", &lines, &cursor}};
+                        } else if (now() == '.') {
+                            decimal_point_used = true;
+                            lexeme.push_back(now());
+                            advance();
+                        } else {
+                            lexeme.push_back(now());
+                            advance();
+                        }
+                    }
+                    
+                    std::size_t numeric_digits = 0;
+                    for (const auto& c: lexeme) {
+                        if (std::isdigit(c)) ++numeric_digits;
+                    }
+                    
+                    if (numeric_digits <= 0) {
+                        return std::unexpected{scan_error{
+                            "invalid sequence, expected a number, found only a numeric negation or decimal points", &lines, &cursor
+                        }};
+                    }
+                    
+                    // if (lexeme.size() == 1 and lexeme[0] == '-') {
+                    //     return std::unexpected{scan_error{
+                    //         "invalid sequence, expected a number, found only a numeric negation", &lines, &cursor
+                    //     }};
+                    // } 
                     
                     ts.members.push_back(token{
                         tokentype::number,

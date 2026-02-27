@@ -26,7 +26,7 @@ bld/
 stage/
 
 .zed/
-/sample.god
+/*.god
 /tokens
 
 /libgod-*.*.*

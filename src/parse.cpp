@@ -3,6 +3,7 @@
 #include <god/types.hpp>
 #include <god/token.hpp>
 #include <god/parse.hpp>
+#include <stdexcept>
 
 namespace god {
 
@@ -168,17 +169,21 @@ auto null(const token& t) -> std::expected<value, token_error> {
 auto number(const token& t) -> std::expected<value, token_error> {
     if (t.lexeme.find('.') != std::string::npos) {
         double v = std::stod(t.lexeme);
-        if (v > double_max)
-            return std::unexpected{token_error{"double value is greater than maximum limit", t}};
-        if (v < double_min)
-            return std::unexpected{token_error{"double value is below the minimum limit", t}};
+        if (v >= double_max) return std::unexpected{token_error{"double value is above the numeric limits", t}};
+        if (v <= double_min) return std::unexpected{token_error{"double value is below the numeric limits", t}};
         return value{v};
     } else {
-        std::int64_t v = std::stoll(t.lexeme);
-        if (v > integer_max)
-            return std::unexpected{token_error{"integer value is greater than maximum limit", t}};
-        if (v < integer_min)
-            return std::unexpected{token_error{"integer value is below the minimum limit", t}};
+        std::int64_t v = 0;
+        try {
+            v = std::stoll(t.lexeme);
+            if (v < integer_min) return std::unexpected{token_error{"integer value below the numeric limits", t}};
+            if (v > integer_max) return std::unexpected{token_error{"integer value above the numeric limits", t}};
+        } catch (const std::out_of_range& e) {
+            if (t.lexeme.starts_with("-"))
+                return std::unexpected{token_error{"integer value is below the numeric limits", t}};
+            else
+                return std::unexpected{token_error{"integer value is above the numeric limits", t}};
+        }
         return value{v};
     }
 }
