@@ -1,3 +1,5 @@
+#include "god/encoding.hpp"
+#include <format>
 #include <god/base.hpp>
 #include <god/util.hpp>
 #include <god/scanner.hpp>
@@ -7,6 +9,65 @@
 #include <expected>
 
 namespace god {
+
+auto scan_error::code(int c) noexcept -> scan_error& {
+    return_code = c;
+    return *this;
+}
+
+auto scan_error::msg(std::string str) noexcept -> scan_error& {
+    message = std::move(str);
+    return *this;
+}
+
+auto scan_error::msg() const noexcept -> std::string_view {
+    return message;
+}
+
+auto scan_error::code() const noexcept -> int {
+    return return_code;
+}
+
+auto scan_error::quit() const noexcept -> void {
+    std::exit(return_code);
+}
+
+auto scan_error::die() const noexcept -> void {
+    std::println("error encountered at line {}, column {}", line + 1, column);
+    std::println("{}", message);
+    auto ctx = context();
+    for (const std::string& s: ctx) {
+        std::println("{}", s);
+    }
+    quit();
+}
+
+auto scan_error::send() const noexcept -> void {
+    die();
+}
+
+auto scan_error::panic() const noexcept -> void {
+    die();
+}
+    
+auto scan_error::context() const noexcept -> std::array<std::string, 3> {
+    std::array<std::string, 3> res = {};
+    res.at(0).assign(std::format("{:3}|", line));
+    res.at(1).assign("\033[1;31m>>>\033[0m|");
+    res.at(2).assign(std::format("{:3}|", line + 2));
+    
+    if (not (context_lines.at(0).empty())) {
+        res.at(0).append(context_lines.at(0));
+    }
+    
+    res.at(1).append(context_lines.at(1));
+    
+    if (not (context_lines.at(2).empty())) {
+        res.at(2).append(context_lines.at(2));
+    }
+    
+    return res;
+}
 
 auto scanner::finished() const noexcept -> bool {
     return (cursor.line >= lines.size());
@@ -64,7 +125,17 @@ auto scanner::advance_line() -> void {
     cursor.column = 0;
 }
 
+auto scanner::validate() -> std::expected<bool, encoding_error> {
+    auto result = encoding::validate(lines);
+    if (not result.first) {
+        return std::unexpected{encoding_error{"invalid utf-8 input", lines.at(result.second), result.second}};
+    }
+    return true;
+}
+
 auto scanner::scan() -> std::expected<tokenstream, scan_error> {
+    auto res = validate();
+    if (not res) res.error().die();
     tokenstream ts{};
 
     while (not finished()) {
@@ -222,15 +293,15 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                     }
                     
                     if (negation_used and (now() == '-')) {
-                        return std::unexpected{scan_error{"a negation operator can only be used at the beginning of a number", &lines, &cursor}};
+                        return std::unexpected{scan_error{"a negation operator can only be used at the beginning of a number", lines, cursor}};
                     }
 
                     while (std::isdigit(now()) or matches(now(), '.', '-')) {
                         if (lexeme.size() > 1 and (now() == '-'))
-                            return std::unexpected{scan_error{"a negation operator can only be used at the beginning of a number", &lines, &cursor}};
+                            return std::unexpected{scan_error("a negation operator can only be used at the beginning of a number", lines, cursor)};
                         
                         if (decimal_point_used and (now() == '.')) {
-                            return std::unexpected{scan_error{"only one decimal point can be used in a numeric sequence", &lines, &cursor}};
+                            return std::unexpected{scan_error{"only one decimal point can be used in a numeric sequence", lines, cursor}};
                         } else if (now() == '.') {
                             decimal_point_used = true;
                             lexeme.push_back(now());
@@ -248,15 +319,9 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                     
                     if (numeric_digits <= 0) {
                         return std::unexpected{scan_error{
-                            "invalid sequence, expected a number, found only a numeric negation or decimal points", &lines, &cursor
+                            "invalid sequence, expected a number, found only a numeric negation or decimal points", lines, cursor
                         }};
                     }
-                    
-                    // if (lexeme.size() == 1 and lexeme[0] == '-') {
-                    //     return std::unexpected{scan_error{
-                    //         "invalid sequence, expected a number, found only a numeric negation", &lines, &cursor
-                    //     }};
-                    // } 
                     
                     ts.members.push_back(token{
                         tokentype::number,
@@ -349,8 +414,8 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                                     return std::unexpected{
                                         scan_error{
                                             "found an escape sequence, but line ended",
-                                            &lines,
-                                            &cursor
+                                            lines,
+                                            cursor
                                         }
                                     };
                                 }
@@ -418,10 +483,10 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                 }
 
                 return std::unexpected{
-                    god::scan_error{
+                    scan_error{
                         "unknown token encountered",
-                        &lines,
-                        &cursor
+                        lines,
+                        cursor
                     }
                 };
             }
