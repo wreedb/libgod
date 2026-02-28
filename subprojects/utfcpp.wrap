@@ -1,8 +1,0 @@
-[wrap-git]
-url = https://github.com/nemtrif/utfcpp.git
-revision = v4.0.9
-depth = 1
-patch_directory = utfcpp
-
-[provide]
-utfcpp = utfcpp_dep

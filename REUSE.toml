@@ -26,3 +26,8 @@ path = [
     "*.lock",
     "subprojects/**"
 ]
+
+[[annotations]]
+SPDX-FileCopyrightText = "2003-2026 Nemanja Trifunovic"
+SPDX-License-Identifier = "BSL-1.0"
+path = "vendor/utfcpp/**"
