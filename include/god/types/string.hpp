@@ -4,8 +4,10 @@
 
 #include <string>
 #include <string_view>
+#include <format>
+#include <print>
+#include <iostream>
 
-#include <god/util.hpp>
 
 namespace god {
 
@@ -23,8 +25,12 @@ public:
         return data_;
     }
     
-    constexpr bool operator==(const string& o) const noexcept;
-    constexpr bool operator!=(const string& o) const noexcept;
+    constexpr bool operator==(const string& o) const noexcept {
+        return data_ == o.data_;
+    }
+    constexpr bool operator!=(const string& o) const noexcept {
+        return data_ != o.data_;
+    }
     
     constexpr bool operator==(const std::string& s) const noexcept;
     constexpr bool operator!=(const std::string& s) const noexcept;

@@ -1,15 +1,14 @@
 #pragma once
-#include <expected>
 #ifndef GOD_TYPES_HPP
 #define GOD_TYPES_HPP
 
+#include <expected>
 #include <cstdint>
 #include <string>
 #include <variant>
 #include <vector>
 
 #include <god/util.hpp>
-
 #include <god/types/string.hpp>
 
 namespace god {
@@ -37,6 +36,7 @@ using identifier = std::string;
 using value_t = std::variant<
     std::nullptr_t,
     std::string,
+    god::string,
     std::int64_t,
     double,
     bool,
@@ -92,6 +92,9 @@ public:
             return true;
         if (val.is<std::string>() and other.val.is<std::string>())
             if (val.as<std::string>() == other.val.as<std::string>())
+                return true;
+        if (val.is<god::string>() and other.val.is<god::string>())
+            if (val.as<god::string>() == other.val.as<god::string>())
                 return true;
         if (val.is<std::int64_t>() and other.val.is<std::int64_t>())
             if (val.as<std::int64_t>() == other.val.as<std::int64_t>())

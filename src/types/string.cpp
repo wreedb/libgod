@@ -7,14 +7,6 @@ namespace god {
 string::string(std::string str) : data_(std::move(str)) {}
 string::string(const char* str) : data_(str) {}
 
-constexpr auto string::operator==(const string& o) const noexcept -> bool {
-    return (data_ == o.data_);
-}
-
-constexpr auto string::operator!=(const string& o) const noexcept -> bool {
-    return (data_ != o.data_);
-}
-
 constexpr auto string::operator==(const std::string& s) const noexcept -> bool {
     return (data_ == s);
 }
