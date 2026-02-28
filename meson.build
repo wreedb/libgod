@@ -21,14 +21,6 @@ subdir('include/god')
 cxx = meson.get_compiler('cpp')
 cxxname = cxx.get_id()
 
-if not cxx.has_header('utf8cpp/utf8.h') and not cxx.has_header('utf8.h')
-    deps += dependency(
-        'utfcpp',
-        required: true,
-        fallback: ['utfcpp', 'utfcpp_dep'])
-
-endif
-
 feat_tests = get_option('tests')
 opt_libcxx = get_option('libcxx')
 opt_stdstatic = get_option('static-stdlib')
@@ -57,7 +49,9 @@ sources = files(
     'src/util.cpp'
 )
 
-includes = include_directories('include')
+includes = include_directories(
+    'include',
+    'vendor/utfcpp/include')
 
 lib = library(
     'god',
