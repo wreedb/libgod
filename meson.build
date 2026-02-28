@@ -21,7 +21,7 @@ subdir('include/god')
 cxx = meson.get_compiler('cpp')
 cxxname = cxx.get_id()
 
-if not cxx.has_header('utf8.h')
+if not cxx.has_header('utf8cpp/utf8.h') and not cxx.has_header('utf8.h')
     deps += dependency(
         'utfcpp',
         required: true,
