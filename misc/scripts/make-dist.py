@@ -18,11 +18,10 @@ def die(message: str):
     sys.exit(1)
 
 def verify_python():
-    version: str = platform.python_version().split('.')
+    version: list[str] = platform.python_version().split('.')
 
     major: int = int(version[0])
     minor: int = int(version[1])
-    patch: int = int(version[2])
 
     if ((major < 3) or ((major >= 3) and (minor < 14))):
         eprint("python version >= 3.14 required (for pathlib 'Path.copy_into()')")
