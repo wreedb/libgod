@@ -15,11 +15,16 @@
                 version = builtins.readFile ./.version;
 
                 nativeBuildInputs = with pkgs; [
+                    pkg-config
                     meson
                     ninja
+                    utfcpp
+                    cmake
                 ];
 
-                buildInputs = [ pkgs.llvmPackages.libcxx ];
+                buildInputs = with pkgs; [
+                    llvmPackages.libcxx
+                ];
 
                 libgod-package = stdenv.mkDerivation {
                     pname = "libgod";
