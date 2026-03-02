@@ -12,5 +12,6 @@
 #include <god/token.hpp>
 #include <god/parse.hpp>
 #include <god/output.hpp>
+#include <god/pretty.hpp>
 
 #endif
