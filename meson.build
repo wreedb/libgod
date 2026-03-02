@@ -38,6 +38,7 @@ if opt_stdstatic and cxxname == 'gcc'
 endif
 
 sources = files(
+    'src/base.cpp',
     'src/input.cpp',
     'src/encoding.cpp',
     'src/output.cpp',
@@ -46,7 +47,8 @@ sources = files(
     'src/token.cpp',
     'src/types.cpp',
     'src/types/string.cpp',
-    'src/util.cpp'
+    'src/util.cpp',
+    'src/pretty/print.cpp'
 )
 
 includes = include_directories(
@@ -81,10 +83,12 @@ headers = files(
 )
 
 types_headers = files('include/god/types/string.hpp')
+pretty_headers = files('include/god/pretty/print.hpp')
 
 install_headers('include/god.hpp')
 install_headers(headers, install_dir: get_option('includedir') / 'god')
 install_headers(types_headers, install_dir: get_option('includedir') / 'god' / 'types')
+install_headers(pretty_headers, install_dir: get_option('includedir') / 'god' / 'pretty')
 
 if feat_tests.allowed()
     subdir('test')
@@ -109,8 +113,8 @@ endif
 if get_option('demos')
 
     executable(
-        'demo',
-        'misc/demo.cpp',
+        'god-to-json',
+        'misc/god-to-json.cpp',
         include_directories: includes,
         link_with: lib,
         dependencies: deps,
@@ -131,5 +135,12 @@ if get_option('demos')
         link_with: lib,
         dependencies: deps,
         install: false)
-
+    
+    executable(
+        'pretty-print',
+        'misc/pretty-print.cpp',
+        include_directories: includes,
+        link_with: lib,
+        dependencies: deps,
+        install: false)
 endif
