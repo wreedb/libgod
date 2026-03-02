@@ -88,41 +88,41 @@ public:
 
 std::ostream& operator<<(std::ostream& os, const string& s);
 
-template<typename... Args>
-auto print(const god::string& message, Args&&... args) -> void {
-    std::vprint_unicode(
-        static_cast<std::string_view>(message),
-        std::make_format_args(args...)
-    );
-}
-
-template<typename... Args>
-auto eprint(const god::string& message, Args&&... args) -> void {
-    std::vprint_unicode(
-        std::cerr,
-        static_cast<std::string_view>(message),
-        std::make_format_args(args...)
-    );
-}
-
-template<typename... Args>
-auto println(const god::string& message, Args&&... args) -> void {
-    std::vprint_unicode(
-        static_cast<std::string_view>(message),
-        std::make_format_args(args...)
-    );
-    std::cout << '\n';
-}
-
-template<typename... Args>
-auto eprintln(const god::string& message, Args&&... args) -> void {
-    std::vprint_unicode(
-        std::cerr,
-        static_cast<std::string_view>(message),
-        std::make_format_args(args...)
-    );
-    std::cerr << '\n';
-}
+// template<typename... Args>
+// auto print(const god::string& message, Args&&... args) -> void {
+//     std::vprint_unicode(
+//         static_cast<std::string_view>(message),
+//         std::make_format_args(args...)
+//     );
+// }
+//
+// template<typename... Args>
+// auto eprint(const god::string& message, Args&&... args) -> void {
+//     std::vprint_unicode(
+//         std::cerr,
+//         static_cast<std::string_view>(message),
+//         std::make_format_args(args...)
+//     );
+// }
+//
+// template<typename... Args>
+// auto println(const god::string& message, Args&&... args) -> void {
+//     std::vprint_unicode(
+//         static_cast<std::string_view>(message),
+//         std::make_format_args(args...)
+//     );
+//     std::cout << '\n';
+// }
+//
+// template<typename... Args>
+// auto eprintln(const god::string& message, Args&&... args) -> void {
+//     std::vprint_unicode(
+//         std::cerr,
+//         static_cast<std::string_view>(message),
+//         std::make_format_args(args...)
+//     );
+//     std::cerr << '\n';
+// }
 
 }; // END namespace god
 

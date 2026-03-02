@@ -29,24 +29,28 @@ overloaded(Ts...) -> overloaded<Ts...>;
 std::size_t countchars(std::string_view str);
 
 template<typename... Args>
-auto print(std::string_view message, Args&&... args) -> void {
-    std::vprint_unicode(message, std::make_format_args(args...));
+inline auto print(std::string_view message, Args&&... args) -> void {
+    std::string str = std::vformat(message.data(), std::make_format_args(args...));
+    std::vprint_unicode(str, std::make_format_args());
 }
 
 template<typename... Args>
-auto eprint(std::string_view message, Args&&... args) -> void {
-    std::vprint_unicode(std::cerr, message, std::make_format_args(args...));
+inline auto eprint(std::string_view message, Args&&... args) -> void {
+    std::string str = std::vformat(message.data(), std::make_format_args(args...));
+    std::vprint_unicode(std::cerr, str, std::make_format_args());
 }
 
 template<typename... Args>
-auto println(std::string_view message, Args&&... args) -> void {
-    std::vprint_unicode(message, std::make_format_args(args...));
+inline auto println(std::string_view message, Args&&... args) -> void {
+    std::string str = std::vformat(message.data(), std::make_format_args(args...));
+    std::vprint_unicode(str, std::make_format_args());
     std::cout << '\n';
 }
 
 template<typename... Args>
-auto eprintln(std::string_view message, Args&&... args) -> void {
-    std::vprint_unicode(std::cerr, message, std::make_format_args(args...));
+inline auto eprintln(std::string_view message, Args&&... args) -> void {
+    std::string str = std::vformat(message.data(), std::make_format_args(args...));
+    std::vprint_unicode(std::cerr, str, std::make_format_args());
     std::cerr << '\n';
 }
 

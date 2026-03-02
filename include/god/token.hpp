@@ -120,7 +120,7 @@ public:
 //! A set of tokens prepared for parsing
 /*!
   consists of an std::deque of god::token objects, along with
-  an std::size_t `pos' to track the logical parsing position.
+  an std::size_t 'pos' to track the logical parsing position.
 */
 class tokenstream {
 public:
@@ -147,7 +147,7 @@ public:
     token& next();
     
 
-    /** \brief Get the current token in the stream (the one matching `pos')
+    /** \brief Get the current token in the stream (the one matching 'pos')
      *
      *  \return a mutable reference to the token
      */
@@ -155,34 +155,34 @@ public:
     
 
     /** \brief Check if we are finished with the token stream
-     *  Note that this checks the `pos' against the deque size,
+     *  Note that this checks the 'pos' against the deque size,
      *  NOT whether the deque has any tokens remaining
      *
-     *  \return true if `pos' is at the end of the deque, false otherwise
+     *  \return true if 'pos' is at the end of the deque, false otherwise
      */
     bool done() const noexcept;
     
 
-    /** \brief Check if the `members' deque is empty
-     *  This is essentially just a shortcut to calling `.empty()'
-     *  on the `members' container itself.
+    /** \brief Check if the 'members' deque is empty
+     *  This is essentially just a shortcut to calling '.empty()'
+     *  on the 'members' container itself.
      *
-     *  \return true if `members' is empty, false otherwise
+     *  \return true if 'members' is empty, false otherwise
      */
     bool empty() const noexcept;
     
 
 
-    /** \brief Check the amount of `members'
-     *  This is essentially just a shortcut to calling `.size()'
-     *  on the `members' container itself.
+    /** \brief Check the amount of 'members'
+     *  This is essentially just a shortcut to calling '.size()'
+     *  on the 'members' container itself.
      *
-     *  \return The amount of remaining `members'
+     *  \return The amount of remaining 'members'
      */
     std::size_t count() const noexcept;
 
 
-    /** \brief Consume the token at the index of `pos'
+    /** \brief Consume the token at the index of 'pos'
      */
     void consume();
 

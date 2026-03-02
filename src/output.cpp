@@ -73,16 +73,16 @@ auto null(const god::value& v) noexcept -> std::string {
 
 auto field(const god::field& f) noexcept -> std::string {
     std::string result;
-    result.append(std::format("{} = {};\n", f.name, element(f.val)));
+    result.append(std::format("{} = {}; ", f.name, element(f.val)));
     return result;
 }
 
 auto list(const god::list& v) noexcept -> std::string {
-    std::string result = "[\n";
+    std::string result = "[ ";
     
     for (std::size_t n = 0; n < v.size(); ++n) {
         result.append(element(v.at(n)));
-        result.append("\n");
+        result.append(" ");
     }
     result.append("]");
     return result;
@@ -98,11 +98,11 @@ auto map(const god::map& v) noexcept -> std::string {
 }
 
 auto document(const god::document& doc) noexcept -> std::string {
-    std::string result = "{\n";
+    std::string result = "{";
     for (std::size_t n = 0; n < doc.fields.size(); ++n) {
         result.append(field(doc.fields.at(n)));
     }
-    result.append("\n}");
+    result.append("}");
     return result;
 }
 

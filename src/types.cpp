@@ -93,5 +93,20 @@ auto map::add(field& f) noexcept -> std::expected<int, error> {
     this->push_back(f);
     return 0;
 }
-    
+
+auto document::operator[](std::string_view name) const noexcept -> std::expected<const value*, error> {
+    const std::vector<field>* flds = &this->fields;
+
+    for (const auto& f: *flds) {
+        if (f.name == name) {
+            return &f.val;
+        }
+    }
+
+    return std::unexpected{error{
+        std::format("no match found for '{}'", name)
+    }};
+}
+
+
 };

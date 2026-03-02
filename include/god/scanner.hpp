@@ -111,25 +111,83 @@ public:
      */
     scanner(std::deque<std::string> *plines) : lines{std::move(*plines)} {}
     
+
+    /** @brief Check if we are at the end of input
+     *  
+     *  @return True when we are at the end of input, false otherwise
+     */
     bool finished() const noexcept;
+
+
+    /** @brief Check if we are at the end of a line
+     *  
+     *  @return True when we are at the end of a line, false otherwise
+     */
     bool eol() const noexcept;
+    
+
+    /** @brief Check if an index is at the end of a line
+     *  
+     *  @param n The index to check
+     *
+     *  @return True if the index is at the end of a line, false otherwise
+     */
     bool eol(std::size_t n) const noexcept;
 
+    
+    /** @brief Get the current character
+     *
+     *  @return The character under the scanners' cursor
+     */
     char now();
     
+
+    /** @brief Move the cursor ahead one line
+     */
     void advance_line();
     
+
+    /** @brief Move the cursor ahead one column
+     */
     void advance();
+
+    /** @brief Move the cursor ahead a specific number of columns
+     *
+     *  @param amount The number of colums to advance
+     */
     void advance(std::size_t amount);
     
+
+    /** @brief Get the next character
+     *
+     *  @return The character under the cursors' next column
+     */
     char peek();
+
+
+    /** @brief Get a specific number of characters ahead of the cursor
+     *
+     *  @param amount The amount of characters to get
+     *
+     *  @return A vector containing the characters
+     */
     std::vector<char> peek(std::size_t amount);
     
+
+    /** @brief Check if the input is valid UTF-8
+     *
+     *  @return True when successful, an encoding_error otherwise
+     */
     std::expected<bool, encoding_error> validate();
 
+
+    /** @brief Scan the input lines
+     *
+     *  @return The resulting tokenstream or a scan_error
+     */
     std::expected<tokenstream, scan_error> scan();
 };
 
-};
+}; // END namespace god
 
 #endif

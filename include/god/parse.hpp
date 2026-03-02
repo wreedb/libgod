@@ -38,27 +38,10 @@ public:
     void die() const noexcept;
     
 }; // END class parse_error
+
+
 }; // END namespace god
     
-//
-// class parse_error : public error {
-// private:
-//     std::string message = "undocumented parsing error";
-//     const god::tokenstream* tokens;
-
-// public:
-//     parse_error(const god::tokenstream *ts) : tokens{ts} {}
-
-//     parse_error(std::string msg, const god::tokenstream *ts)
-//         : message{std::move(msg)},
-//           tokens{ts}
-//     {}
-
-//     std::string context() const noexcept;
-//     void send() const noexcept;
-// };
-
-// };
 
 namespace god::parse {
     

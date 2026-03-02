@@ -22,12 +22,29 @@ constexpr static const double double_min = static_cast<double>(integer_min);
 struct field;
 class value;
 
-// using map = std::vector<field>;
-
+//!
+//! Represents a God map, consisting of fields
+//!
 struct map : std::vector<field> {
     using std::vector<field>::vector;
+    
+    /** @brief Add a field to the map, overwriting any existing field
+     *  of the same name
+     *
+     *  @param f A reference to a field
+     *
+     *  @return A reference to the map; chainable
+     */
     map& clobber(field& f) noexcept;
+    
+    /** @brief Add a field to the map, without overwriting
+     *
+     *  @param f A reference to a field
+     *
+     *  @return 0 when successful or an error
+     */
     std::expected<int, error> add(field& f) noexcept;
+    
 };
 
 using list = std::vector<value>;
@@ -44,6 +61,9 @@ using value_t = std::variant<
     list
 >;
 
+//!
+//! An opaque wrapper for any of the valid internal value types
+//!
 class value {
 
 public:
@@ -57,16 +77,28 @@ public:
 
     constexpr bool operator==(const value& other) const = default;
 
+    /** @brief Get an underlying value
+     *
+     *  @return A mutable reference to the value as type T
+     */
     template<typename T>
     T& as() {
         return std::get<T>(data);
     }
 
+    /** @brief Get an underlying value
+     *
+     *  @return A constant reference to the value as type T
+     */
     template<typename T>
     const T& as() const {
         return std::get<T>(data);
     }
 
+    /** @brief Verify the underlying type of a value
+     *
+     *  @return True if the underlying value is of type T, false otherwise
+     */
     template<typename T>
     bool is() const {
         return std::holds_alternative<T>(data);
@@ -83,10 +115,19 @@ public:
     }
 };
 
+//!
+//! Represents a God field, consisting of an identifier and
+//! an opaque value object
+//!
 struct field {
 public:
-    identifier name;
-    value val;
+    identifier name; //!< The fields' identifier
+    value val;       //!< The fields' opaque value
+
+    /** @brief Operator overload to compare two fields
+     *
+     *  @return True if the fields names/values are identical, false otherwise
+     */
     bool operator==(const field& other) const {
         if (name == other.name)
             return true;
@@ -117,28 +158,66 @@ public:
     }
 };
 
+//!
+//! The top-level data structure of the God format
+//!
 class document {
 public:
-    std::vector<field> fields;
+    std::vector<field> fields; //!< The fields contained within the document
 
     document() = default;
     ~document() = default;
 
     constexpr bool operator==(const document& other) const = default;
-    
+
+    /** @brief Get the document in JSON string representation
+     *
+     *  @return The resulting string in JSON format
+     */
     std::string json() const noexcept;
 
+    /** @brief Search for a field using path syntax as a specific type
+     *
+     *  @param path The period separated path to search for
+     *
+     *  @return A constant pointer to an value or an error
+     * */
     std::expected<const value*, error> lookup(std::string_view qry) const noexcept;
     
+    /** @brief Get the document in canonical string representation
+     *
+     *  @return The resulting string
+     */
     std::string string() const noexcept;
     
+    /** @brief Search for a field using path syntax as a specific type
+     *
+     *  @param path The period separated path to search for
+     *
+     *  @return A constant pointer to an underlying value (of type t) or an error
+     */
     template<typename t>
     std::expected<t, error> query(std::string_view path) {
         auto _value = lookup(path);
         if (not _value) return std::unexpected{_value.error()};
+        if (not _value.value()->is<t>()) {
+            return std::unexpected{
+                error{"match found, but requested type is a mismatch"}
+            };
+        }
         return _value.value()->as<t>();
     }
     
+
+    /** @brief Search for a field using [] syntax
+     *
+     *  @param name The field name to search for
+     *
+     *  @return A constant pointer to a value or an error
+     * */
+    std::expected<const value*, error> operator[](std::string_view name) const noexcept;
+    
+
     /** @brief Append a field to the document, or replace an existing  field if they have the same identifier
      * 
      *  @param f A reference to a field
@@ -146,6 +225,7 @@ public:
      *  @return A reference to the document; chainable
      */
     document& clobber(god::field& f) noexcept;
+    
     
     /** @brief Append a field to the document
      *  
