@@ -1,6 +1,8 @@
 #include <expected>
 #include <utility>
+#include <format>
 #include <god/token.hpp>
+#include <god/util.hpp>
 
 namespace god {
 auto token::type_string() const noexcept -> std::string {
@@ -19,6 +21,25 @@ auto token::type_string() const noexcept -> std::string {
         case tokentype::identifier: return "identifier";
         default: std::unreachable();
     }
+}
+
+auto token_error::context() const noexcept -> std::string {
+    return std::format(
+        "token: {{ type = {}, location = {}, value = '{}' }}",
+        token.type_string(),
+        token.location.string(),
+        token.lexeme
+    );
+}
+
+auto token_error::quit() const noexcept -> void {
+    std::exit(return_code);
+}
+
+auto token_error::die() const noexcept -> void {
+    eprintln("{}", message);
+    eprintln("{}", context());
+    quit();
 }
 
 auto tokenstream::now() -> token& {

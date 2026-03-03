@@ -137,6 +137,7 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
     auto res = validate();
     if (not res) res.error().die();
     tokenstream ts{};
+    
 
     while (not finished()) {
         std::uint32_t line_begin = (cursor.line + 1);
@@ -162,10 +163,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                 ts.members.push_back(token{
                     tokentype::left_brace,
                     "{",
-                    line_begin,
-                    cursor.line + 1,
-                    column_begin,
-                    cursor.column + 1
+                    coordinates{
+                        line_begin,
+                        cursor.line + 1,
+                        column_begin,
+                        cursor.column + 1
+                    }
                 });
                 advance();
                 continue;
@@ -175,10 +178,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                 ts.members.push_back(token{
                     tokentype::right_brace,
                     "}",
-                    line_begin,
-                    cursor.line + 1,
-                    column_begin,
-                    cursor.column + 1
+                    coordinates{
+                        line_begin,
+                        cursor.line + 1,
+                        column_begin,
+                        cursor.column + 1
+                    }
                 });
                 advance();
                 continue;
@@ -188,10 +193,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                 ts.members.push_back(token{
                     tokentype::left_bracket,
                     "[",
-                    line_begin,
-                    cursor.line + 1,
-                    column_begin,
-                    cursor.column + 1
+                    coordinates{
+                        line_begin,
+                        cursor.line + 1,
+                        column_begin,
+                        cursor.column + 1
+                    }
                 });
                 advance();
                 continue;
@@ -201,10 +208,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                 ts.members.push_back(token{
                     tokentype::right_bracket,
                     "]",
-                    line_begin,
-                    cursor.line + 1,
-                    column_begin,
-                    cursor.column + 1
+                    coordinates{
+                        line_begin,
+                        cursor.line + 1,
+                        column_begin,
+                        cursor.column + 1
+                    }
                 });
                 advance();
                 continue;
@@ -214,10 +223,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                 ts.members.push_back(token{
                     tokentype::semicolon,
                     ";",
-                    line_begin,
-                    cursor.line + 1,
-                    column_begin,
-                    cursor.column + 1
+                    coordinates{
+                        line_begin,
+                        cursor.line + 1,
+                        column_begin,
+                        cursor.column + 1
+                    }
                 });
                 advance();
                 continue;
@@ -227,10 +238,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                 ts.members.push_back(token{
                     tokentype::equal,
                     "=",
-                    line_begin,
-                    cursor.line + 1,
-                    column_begin,
-                    cursor.column + 1
+                    coordinates{
+                        line_begin,
+                        cursor.line + 1,
+                        column_begin,
+                        cursor.column + 1
+                    }
                 });
                 advance();
                 continue;
@@ -261,10 +274,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
 
                     ts.members.push_back(token{
                         tt, lexeme,
-                        line_begin,
-                        cursor.line + 1,
-                        column_begin,
-                        cursor.column + 1
+                        coordinates{
+                            line_begin,
+                            cursor.line + 1,
+                            column_begin,
+                            cursor.column + 1
+                        }
                     });
                     
                     continue;
@@ -326,10 +341,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                     ts.members.push_back(token{
                         tokentype::number,
                         lexeme,
-                        line_begin,
-                        cursor.line + 1,
-                        column_begin,
-                        cursor.column + 1
+                        coordinates{
+                            line_begin,
+                            cursor.line + 1,
+                            column_begin,
+                            cursor.column + 1
+                        }
                     });
                     continue;
                 }
@@ -439,10 +456,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                     ts.members.push_back(token{
                         tokentype::multiline_string,
                         lexeme,
-                        line_begin,
-                        cursor.line + 1,
-                        column_begin,
-                        cursor.column + 1
+                        coordinates{
+                            line_begin,
+                            (cursor.line + 1),
+                            column_begin,
+                            (cursor.column + 1)
+                        }
                     });
                     continue;
                 }
@@ -474,10 +493,12 @@ auto scanner::scan() -> std::expected<tokenstream, scan_error> {
                     ts.members.push_back(token{
                         tokentype::string,
                         lexeme,
-                        line_begin,
-                        cursor.line + 1,
-                        column_begin,
-                        cursor.column + 1
+                        coordinates{
+                            line_begin,
+                            cursor.line + 1,
+                            column_begin,
+                            cursor.column + 1
+                        }
                     });
                     continue;
                 }

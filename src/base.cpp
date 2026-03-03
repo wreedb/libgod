@@ -1,8 +1,19 @@
+#include <format>
 #include <god/base.hpp>
 #include <god/util.hpp>
 
 namespace god {
 
+auto coordinates::string() const noexcept -> std::string {
+    return std::format(
+        "[[{}, {}], [{}, {}]]",
+        line_begin,
+        column_begin,
+        line_end,
+        column_end
+    );
+}
+    
 auto error::msg(std::string str) noexcept -> error& {
     message = std::move(str);
     return *this;
@@ -30,11 +41,6 @@ auto error::die() const noexcept -> void {
     quit();
 }
 
-auto error::panic() const noexcept -> void {
-    die();
-}
-auto error::send() const noexcept -> void {
-    die();
-}
+
 
 }; // END namespace god

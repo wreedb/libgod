@@ -1,9 +1,10 @@
 #include <expected>
+
 #include <god/base.hpp>
+#include <god/util.hpp>
 #include <god/types.hpp>
 #include <god/token.hpp>
 #include <god/parse.hpp>
-#include <stdexcept>
 
 namespace god {
 
@@ -23,10 +24,10 @@ auto parse_error::context() const noexcept -> std::string {
         result.append(std::format(
             "previous token: {{ type = {}, begin = [{}:{}], end = [{}:{}], value = [{}]\n",
             prev->type_string(),
-            prev->line_begin,
-            prev->column_begin,
-            prev->line_end,
-            prev->column_end,
+            prev->location.line_begin,
+            prev->location.column_begin,
+            prev->location.line_end,
+            prev->location.column_end,
             prev->lexeme
         ));
     }
@@ -34,17 +35,17 @@ auto parse_error::context() const noexcept -> std::string {
     auto this_token = tokens.at(tokens.pos);
 
     if (not this_token) {
-        this_token.error().send();
+        this_token.error().die();
         
     } else {
         auto curr = this_token.value();
         result.append(std::format(
             "\033[1;31m>>>\033[m {{ type = {}, begin = [{}:{}], end = [{}:{}], value = [{}]\n",
             curr->type_string(),
-            curr->line_begin,
-            curr->column_begin,
-            curr->line_end,
-            curr->column_end,
+            curr->location.line_begin,
+            curr->location.column_begin,
+            curr->location.line_end,
+            curr->location.column_end,
             curr->lexeme
         ));
     }
@@ -58,10 +59,10 @@ auto parse_error::context() const noexcept -> std::string {
         result.append(std::format(
             "next token: {{ type = {}, begin = [{}:{}], end = [{}:{}], value = [{}]\n",
             next->type_string(),
-            next->line_begin,
-            next->column_begin,
-            next->line_end,
-            next->column_end,
+            next->location.line_begin,
+            next->location.column_begin,
+            next->location.line_end,
+            next->location.column_end,
             next->lexeme
         ));
     }
@@ -92,17 +93,9 @@ auto parse_error::quit() const noexcept -> void {
 }
 
 auto parse_error::die() const noexcept -> void {
-    std::println(std::cerr, "{}", message);
-    std::print(std::cerr, "{}", context());
+    eprintln(message);
+    eprint(context());
     quit();
-}
-
-auto parse_error::panic() const noexcept -> void {
-    die();
-}
-
-auto parse_error::send() const noexcept -> void {
-    die();
 }
 
 }; // END namespace god
@@ -205,7 +198,7 @@ auto list(tokenstream& ts) -> std::expected<god::list, parse_error> {
             // encountered a number
             case tokentype::number: {
                 auto x = parse::number(ts.now());
-                if (not x) x.error().send();
+                if (not x) x.error().die();
                 lst.push_back(x.value());
                 ts.consume();
                 break;
@@ -214,7 +207,7 @@ auto list(tokenstream& ts) -> std::expected<god::list, parse_error> {
             // encountered a boolean
             case tokentype::boolean: {
                 auto x = parse::boolean(ts.now());
-                if (not x) x.error().send();
+                if (not x) x.error().die();
                 lst.push_back(x.value());
                 ts.consume();
                 break;
@@ -223,7 +216,7 @@ auto list(tokenstream& ts) -> std::expected<god::list, parse_error> {
             // encountered a null
             case tokentype::null: {
                 auto x = parse::null(ts.now());
-                if (not x) x.error().send();
+                if (not x) x.error().die();
                 lst.push_back(x.value());
                 ts.consume();
                 break;
@@ -232,7 +225,7 @@ auto list(tokenstream& ts) -> std::expected<god::list, parse_error> {
             // encountered a multi-line string
             case tokentype::multiline_string: {
                 auto x = parse::multline_string(ts.now());
-                if (not x) x.error().send();
+                if (not x) x.error().die();
                 lst.push_back(x.value());
                 ts.consume();
                 break;
@@ -241,7 +234,7 @@ auto list(tokenstream& ts) -> std::expected<god::list, parse_error> {
             // encountered a string
             case tokentype::string: {
                 auto x = parse::string(ts.now());
-                if (not x) x.error().send();
+                if (not x) x.error().die();
                 lst.push_back(x.value());
                 ts.consume();
                 break;
@@ -303,12 +296,12 @@ auto map(tokenstream& ts, settings s) -> std::expected<god::map, parse_error> {
     
     while(ts.now().type != tokentype::right_brace) {
         auto x = parse::field(ts);
-        if (not x) x.error().panic();
+        if (not x) x.error().die();
         if (s.clobber) {
             mp.clobber(x.value());
         } else {
             auto added = mp.add(x.value());
-            if (not added) added.error().panic();
+            if (not added) added.error().die();
         }
     }
     
@@ -348,7 +341,6 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
         case tokentype::left_brace: {
             auto x = parse::map(ts);
             if (not x) return std::unexpected{x.error()};
-            // if (not x) x.error().panic();
             f.val = x.value();
             break;
         }
@@ -356,14 +348,13 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
         case tokentype::left_bracket: {
             auto x = parse::list(ts);
             if (not x) return std::unexpected{x.error()};
-            // if (not x) x.error().panic();
             f.val = x.value();
             break;
         }
         
         case tokentype::number: {
             auto x = parse::number(ts.now());
-            if (not x) x.error().send();
+            if (not x) x.error().die();
             f.val = x.value();
             ts.consume();
             break;
@@ -371,7 +362,7 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
         
         case tokentype::boolean: {
             auto x = parse::boolean(ts.now());
-            if (not x) x.error().send();
+            if (not x) x.error().die();
             f.val = x.value();
             ts.consume();
             break;
@@ -379,7 +370,7 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
         
         case tokentype::null: {
             auto x = parse::null(ts.now());
-            if (not x) x.error().send();
+            if (not x) x.error().die();
             f.val = x.value();
             ts.consume();
             break;
@@ -387,7 +378,7 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
         
         case tokentype::multiline_string: {
             auto x = parse::multline_string(ts.now());
-            if (not x) x.error().send();
+            if (not x) x.error().die();
             f.val = x.value();
             ts.consume();
             break;
@@ -395,7 +386,7 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
         
         case tokentype::string: {
             auto x = parse::string(ts.now());
-            if (not x) x.error().send();
+            if (not x) x.error().die();
             f.val = x.value();
             ts.consume();
             break;
@@ -416,11 +407,11 @@ auto field(tokenstream& ts) -> std::expected<god::field, parse_error> {
     return f;
 }
 
-auto document(tokenstream &ts, settings s) -> std::expected<god::document, parse_error> {
+auto document(tokenstream &ts, settings conf) -> std::expected<god::document, parse_error> {
     
     // Verify the opening document brace and consume it
     auto first = ts.first();
-    if (not first) first.error().send();
+    if (not first) first.error().die();
     if (first.value()->type != tokentype::left_brace)
         return std::unexpected{parse_error{"file/input must begin with an opening document brace", ts}};
     else
@@ -428,7 +419,7 @@ auto document(tokenstream &ts, settings s) -> std::expected<god::document, parse
     
     // Verify the closing document brace and consume it
     auto last = ts.last();
-    if (not last) last.error().send();
+    if (not last) last.error().die();
     if (last.value()->type != tokentype::right_brace)
         return std::unexpected{parse_error{"file/input must end with a closing document brace", ts}};
     else
@@ -440,11 +431,11 @@ auto document(tokenstream &ts, settings s) -> std::expected<god::document, parse
     while (not ts.done()) {
         auto x = parse::field(ts);
         if (not x) return std::unexpected(x.error());
-        if (s.clobber) {
+        if (conf.clobber) {
             doc.clobber(x.value());
         } else {
             auto y = doc.add(x.value());
-            if (not y) y.error().panic();
+            if (not y) y.error().die();
         }
     }
     
