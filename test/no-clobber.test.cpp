@@ -12,12 +12,12 @@ auto main(int argc, const char **argv) -> int {
     auto scanner = god::scanner(&input.value());
     auto tokens = scanner.scan();
 
-    if (not tokens) tokens.error().panic();
+    if (not tokens) tokens.error().die();
 
     auto document = god::document{};
     
-    auto field_one = god::field{.name = "test", .val = god::map{}};
-    auto field_two = god::field{.name = "test", .val = god::list{}};
+    auto field_one = god::field("test", god::map{});
+    auto field_two = god::field("test", god::list{});
     auto result_one = document.add(field_one);
     auto result_two = document.add(field_two);
     

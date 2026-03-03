@@ -56,14 +56,6 @@ auto encoding_error::die() const noexcept -> void {
     quit();
 }
 
-auto encoding_error::panic() const noexcept -> void {
-    die();
-}
-
-auto encoding_error::send() const noexcept -> void {
-    die();
-}
-
 };
 
 namespace god::encoding {

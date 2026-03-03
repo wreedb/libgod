@@ -40,3 +40,8 @@ doc/.build/
 subprojects/utfcpp/
 subprojects/packagecache/
 subprojects/.wraplock
+
+doc/source/doxygen/
+doc/source/_static/
+doc/source/_templates/
+doc/build/

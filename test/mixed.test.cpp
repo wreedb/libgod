@@ -11,11 +11,11 @@ auto main(int argc, const char **argv) -> int {
     auto scanner = god::scanner(&input.value());
     auto tokens = scanner.scan();
 
-    if (not tokens) tokens.error().panic();
+    if (not tokens) tokens.error().die();
 
     auto document = god::parse::document(tokens.value());
 
-    if (not document) document.error().panic();
+    if (not document) document.error().die();
     
     auto mixed = document->query<god::list>("mixed");
 
@@ -24,12 +24,11 @@ auto main(int argc, const char **argv) -> int {
     using val = god::value;
     using field = god::field;
 
-    list control = {
-        map{field{.name = "a", .val = val{1}}},
-        map{field{.name = "b", .val = val{2}}},
-        list{val{1}, val{2}},
-        val{3}
-    };
+    list control;
+    control.push_back(map({field("a", val{1})}));
+    control.push_back(map({field("b", val{2})}));
+    control.push_back(list({val{1}, val{2}}));
+    control.push_back(val{3});
 
     if (mixed.value() != control) return 1;
     return 0;

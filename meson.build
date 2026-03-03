@@ -48,7 +48,7 @@ sources = files(
     'src/types.cpp',
     'src/types/string.cpp',
     'src/util.cpp',
-    'src/pretty/print.cpp'
+    'src/pretty.cpp'
 )
 
 includes = include_directories(
@@ -80,15 +80,14 @@ headers = files(
     'include/god/token.hpp',
     'include/god/types.hpp',
     'include/god/util.hpp',
+    'include/god/pretty.hpp'
 )
 
 types_headers = files('include/god/types/string.hpp')
-pretty_headers = files('include/god/pretty/print.hpp')
 
 install_headers('include/god.hpp')
 install_headers(headers, install_dir: get_option('includedir') / 'god')
 install_headers(types_headers, install_dir: get_option('includedir') / 'god' / 'types')
-install_headers(pretty_headers, install_dir: get_option('includedir') / 'god' / 'pretty')
 
 if feat_tests.allowed()
     subdir('test')

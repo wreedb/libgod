@@ -11,7 +11,7 @@ auto main(int argc, const char **argv) -> int {
     auto scanner = god::scanner(&input.value());
     auto tokens = scanner.scan();
 
-    if (not tokens) tokens.error().panic();
+    if (not tokens) tokens.error().die();
 
     auto document = god::parse::document(*tokens);
 

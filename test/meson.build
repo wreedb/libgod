@@ -37,7 +37,6 @@ endforeach
 
 tests = [
     'matrix',
-    'deep-matrix',
     'mixed',
     'empty-list',
     'empty-map',

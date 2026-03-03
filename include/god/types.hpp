@@ -47,6 +47,9 @@ public:
      */
     std::expected<int, error> add(field& f) noexcept;
     
+    
+    std::expected<const field*, error> operator[](std::string_view name) const noexcept;
+    
     /// @}
 };
 
@@ -190,15 +193,6 @@ public:
         return false;
     }
     
-    /** @brief Set the field's value.
-     *  @param v The new value
-     *  @return A reference to the field; chainable.
-     */
-    field& value(value& v) noexcept {
-        val = std::move(v);
-        return *this;
-    }
-
     /** @brief Set the field's identifier.
      *  @param pname The new identifier string
      *  @return A reference to the field; chainable.
@@ -231,6 +225,16 @@ public:
      */
     constexpr bool operator==(const document& other) const = default;
 
+    /** @brief Populate a document by parsing an input file
+     *  @param inputfile A path to the file to read
+     */
+    void load(const std::string& inputfile);
+    
+    /** @brief Populate a document by parsing input from a stream
+     *  @param is The input stream to read from
+     */
+    void load(std::istream& is);
+    
     /** @brief Get the document in JSON string representation
      *  @return The resulting string in JSON format
      */
@@ -285,6 +289,9 @@ public:
     
     /// @}
 };
+
+std::istream& operator>>(std::istream& is, god::document& doc);
+std::ostream& operator<<(std::ostream& os, god::document& doc);
 
 }; // END namespace god
 

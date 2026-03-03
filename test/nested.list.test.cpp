@@ -16,16 +16,16 @@ auto main(int argc, const char **argv) -> int {
     auto scanner = god::scanner(&input.value());
     auto tokens = scanner.scan();
 
-    if (not tokens) tokens.error().panic();
+    if (not tokens) tokens.error().die();
 
     auto document = god::parse::document(tokens.value());
 
-    if (not document) document.error().panic();
+    if (not document) document.error().die();
     
 
     auto lst = document->query<god::list>("users.will.id");
 
-    auto control = god::list{god::value{1000}, god::value{1000}};
+    auto control = god::list{{god::value{1000}, god::value{1000}}};
     
     if (lst.value() != control) return 1;
     return 0;

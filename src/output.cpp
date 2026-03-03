@@ -1,6 +1,7 @@
 #include <god/types.hpp>
 #include <god/output.hpp>
 
+#include <iterator>
 #include <ranges>
 #include <format>
 

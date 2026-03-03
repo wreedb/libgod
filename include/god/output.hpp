@@ -147,14 +147,14 @@ std::string null(const god::value& v) noexcept;
  *  @param v Constant reference to a value
  *  @return The translated list as a string
  */
-std::string list(const god::value& v) noexcept;
+std::string list(const god::list& v) noexcept;
 
 
 /** @brief Translate a map into canonical representation
  *  @param v Constant reference to a value
  *  @return The translated map as a string
  */
-std::string map(const god::value& v) noexcept;
+std::string map(const god::map& v) noexcept;
 
 
 /** @brief Translate a field into canonical representation

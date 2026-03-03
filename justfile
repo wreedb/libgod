@@ -4,8 +4,12 @@ version := `cat .version`
 
 builddir := quote(justfile_directory() / ".build")
 cachedir := quote(justfile_directory() / ".cache")
-docsdir := quote(justfile_directory() / "doc/.build")
+
+docoutput := quote(justfile_directory() / "doc/build")
+htmldir := quote(justfile_directory() / "doc/build/html")
 doxyfile := quote(justfile_directory() / "doc/doxyfile")
+xmldir := quote(justfile_directory() / "doc/source/doxygen/xml")
+docsource := quote(justfile_directory() / "doc/source")
 
 default:
     @just --list
@@ -41,20 +45,20 @@ clean-build:
     -rm -rf {{builddir}}
 
 [group("docs")]
+docs: doxygen
+    sphinx-build {{docsource}} {{docoutput}}
+
+[group("docs")]
 doxygen:
     doxygen {{doxyfile}}
 
 [group("docs")]
 clean-docs:
-    -rm -rf {{docsdir}}
+    -rm -rf {{htmldir}} {{xmldir}}
 
 [group("maintainence")]
 clean-cache:
     -rm -rf {{cachedir}}
-
-[group("nix")]
-flake action="build":
-    {{ if action == 'build' { `nix build` } else if action == 'update' { `nix flake update` } else if action == 'clean' { `rm -f result` } else { `echo` } }}
 
 [group("nix")]
 flake-update:
